@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import { Users, Car, Star, Award, Globe, Heart, Target, Zap } from 'lucide-react';
 
 const TEAM = [
-  { name: 'Ahmad Hassan', role: 'CEO & Co-Founder', bio: '10+ years in mobility tech. Ex-Careem.', color: '#6366f1' },
-  { name: 'Sana Malik', role: 'CTO & Co-Founder', bio: 'Full-stack engineer. Built BlaBlaCar Pakistan ops.', color: '#ec4899' },
-  { name: 'Omar Farooq', role: 'Head of Safety', bio: 'Former law enforcement. Passionate about safe travel.', color: '#10b981' },
+  { name: 'Muzamal Farooq', role: 'CEO & Co-Founder', bio: '10+ years in mobility tech. Ex-Careem.', color: '#6366f1' },
+  { name: 'Hira Rehman', role: 'CTO & Co-Founder', bio: 'Full-stack engineer. Built BlaBlaCar Pakistan ops.', color: '#ec4899' },
+  { name: 'Bilal Hussain', role: 'Head of Safety', bio: 'Former law enforcement. Passionate about safe travel.', color: '#10b981' },
   { name: 'Ayesha Khan', role: 'Head of Design', bio: 'UX designer. Crafting premium digital experiences.', color: '#f59e0b' },
 ];
 

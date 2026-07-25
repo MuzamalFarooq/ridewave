@@ -22,7 +22,7 @@ const BENEFITS = [
   { icon: Shield, title: 'Fully Protected', desc: "RideWave's insurance covers all rides. Traveler identities are verified before they can book your vehicle.", color: '#f59e0b' },
   { icon: Star, title: 'Build Your Reputation', desc: 'Earn 5-star reviews to unlock Featured Rider status with priority placement and higher fares.', color: '#ec4899' },
   { icon: BarChart2, title: 'Real-time Analytics', desc: 'Track your earnings, acceptance rate, ratings, and performance through your dedicated rider dashboard.', color: '#8b5cf6' },
-  { icon: MessageSquare, title: 'Dedicated Support', desc: '24/7 rider support via in-app chat, phone, and WhatsApp. We're always here for you.', color: '#3b82f6' },
+  { icon: MessageSquare, title: 'Dedicated Support', desc: '24/7 rider support via in-app chat, phone, and WhatsApp. We are always here for you.', color: '#3b82f6' },
 ];
 
 const FAQS = [
