@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, ArrowLeft, Send, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import styles from './forgot-password.module.css';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');

@@ -13,6 +13,8 @@ const nextConfig = {
       bodySizeLimit: '10mb',
     },
   },
+  // Force Next.js to transpile packages that use modern ESM exports
+  transpilePackages: ['lucide-react'],
   env: {
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3000',
