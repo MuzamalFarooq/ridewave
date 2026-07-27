@@ -244,7 +244,7 @@ export default function HeroSection() {
                 <button
                   type="submit"
                   disabled={isSearching}
-                  className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white font-semibold text-sm hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 group disabled:opacity-75"
+                  className="w-full py-3.5 px-6 rounded-xl bg-linear-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white font-semibold text-sm hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 group disabled:opacity-75"
                 >
                   <Search className={`w-4 h-4 ${isSearching ? 'animate-spin' : 'group-hover:scale-110'} transition-transform`} />
                   <span>{isSearching ? 'Searching...' : 'Search Ride'}</span>
