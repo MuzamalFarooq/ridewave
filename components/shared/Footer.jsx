@@ -68,10 +68,10 @@ const footerLinks = {
 };
 
 const socials = [
-  { icon: FacebookIcon, href: '#', label: 'Facebook' },
+  { icon: FacebookIcon, href: 'https://www.facebook.com/tigerstyle786.M', label: 'Facebook' },
   { icon: TwitterIcon, href: '#', label: 'Twitter' },
-  { icon: InstagramIcon, href: '#', label: 'Instagram' },
-  { icon: LinkedinIcon, href: '#', label: 'LinkedIn' },
+  { icon: InstagramIcon, href: 'https://www.instagram.com/tigerstyle786', label: 'Instagram' },
+  { icon: LinkedinIcon, href: 'https://www.linkedin.com/in/muzamal-farooq-1232693a9', label: 'LinkedIn' },
   { icon: YoutubeIcon, href: '#', label: 'YouTube' },
 ];
 
@@ -99,8 +99,8 @@ export default function Footer() {
             {/* Contact Info */}
             <div className="space-y-2 mb-6">
               {[
-                { icon: Mail, text: 'support@ridewave.com' },
-                { icon: Phone, text: '+92 300 123 4567' },
+                { icon: Mail, text: 'muzamalfarooq111@gmail.com' },
+                { icon: Phone, text: '+92 306 7774327' },
                 { icon: MapPin, text: 'Lahore, Pakistan' },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
