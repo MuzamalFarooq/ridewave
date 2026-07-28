@@ -25,7 +25,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* Main Landing Content */}
-      <main className="flex-grow">
+      <main className="grow">
         {/* 1. Hero Section & Glassmorphism Search */}
         <HeroSection />
 
