@@ -792,7 +792,7 @@ export default function HomePage() {
                 whileHover={{ y: -4 }}
                 className="glass-card p-6 flex gap-4"
               >
-                <div className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.1)' }}>
+                <div className="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.1)' }}>
                   <Icon className="w-6 h-6" style={{ color: 'var(--success)' }} />
                 </div>
                 <div>
