@@ -134,7 +134,7 @@ export default function BecomeRiderPage() {
                 whileHover={{ y: -6 }}
                 className="glass-card p-6 flex gap-4"
               >
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `${color}15` }}>
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ background: `${color}15` }}>
                   <Icon className="w-6 h-6" style={{ color }} />
                 </div>
                 <div>
