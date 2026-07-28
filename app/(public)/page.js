@@ -879,7 +879,7 @@ export default function HomePage() {
                   'One-tap SOS emergency button',
                 ].map((feature) => (
                   <div key={feature} className="flex items-center gap-2 mb-2">
-                    <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--success)' }} />
+                    <CheckCircle className="w-4 h-4 shrink-0" style={{ color: 'var(--success)' }} />
                     <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{feature}</span>
                   </div>
                 ))}
