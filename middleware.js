@@ -10,7 +10,7 @@ export async function middleware(req) {
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/profile') || pathname.startsWith('/settings')) {
     if (!token) {
       const url = req.nextUrl.clone();
-      url.pathname = '/auth/login';
+      url.pathname = '/login';
       url.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(url);
     }
@@ -34,7 +34,7 @@ export async function middleware(req) {
     }
   }
 
-  if ((pathname.startsWith('/auth/login') || pathname.startsWith('/auth/register')) && token) {
+  if ((pathname === '/login' || pathname === '/register') && token) {
     return NextResponse.redirect(new URL(getDashboardPath(role), req.url));
   }
 
@@ -51,7 +51,7 @@ export const config = {
     '/dashboard/:path*',
     '/profile/:path*',
     '/settings/:path*',
-    '/auth/login',
-    '/auth/register',
+    '/login',
+    '/register',
   ],
 };
