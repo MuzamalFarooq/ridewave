@@ -4,7 +4,7 @@ import DashboardSidebar from '@/components/shared/DashboardSidebar';
 
 export default async function DashboardLayout({ children }) {
   const session = await auth();
-  if (!session) redirect('/auth/login');
+  if (!session) redirect('/login');
 
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--bg-base)' }}>

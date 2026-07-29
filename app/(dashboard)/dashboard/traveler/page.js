@@ -7,7 +7,8 @@ export const metadata = { title: 'Traveler Dashboard' };
 
 export default async function TravelerDashboardPage() {
   const session = await auth();
-  if (!session || session.user.role === 'ADMIN') redirect('/dashboard/admin');
+  if (!session) redirect('/login');
+  if (session.user.role !== 'TRAVELER') redirect('/forbidden');
 
   const [bookings, notifications, recentRides] = await Promise.all([
     prisma.booking.findMany({

@@ -246,7 +246,7 @@ export default function ProfilePage() {
               </div>
               <div className="flex items-center justify-between py-2">
                 <div><div className="text-sm font-medium">Password</div><div className="text-xs" style={{ color: 'var(--text-muted)' }}>Last changed: never</div></div>
-                <a href="/auth/forgot-password" className="text-xs font-medium" style={{ color: 'var(--primary)' }}>Change →</a>
+                <a href="/forgot-password" className="text-xs font-medium" style={{ color: 'var(--primary)' }}>Change →</a>
               </div>
             </div>
           </div>

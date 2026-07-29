@@ -7,6 +7,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '@/components/shared/ThemeProvider';
 import { useSocket } from '@/contexts/SocketContext';
+import { getDashboardPath, normalizeRole } from '@/lib/auth-redirects';
 import {
   Car, Bell, User, Menu, X, Sun, Moon, ChevronDown,
   Search, MapPin, LogOut, Settings, BarChart2, Shield,
@@ -43,11 +44,8 @@ export default function Navbar() {
   }, []);
 
   const getDashboardLink = () => {
-    if (!session) return '/auth/login';
-    const role = session.user.role;
-    if (role === 'ADMIN') return '/dashboard/admin';
-    if (role === 'RIDER') return '/dashboard/rider';
-    return '/dashboard/traveler';
+    if (!session) return '/login';
+    return getDashboardPath(session.user?.role);
   };
 
   const navLinks = [
@@ -59,12 +57,14 @@ export default function Navbar() {
     { href: '/contact', label: 'Contact', icon: MessageSquare },
   ];
 
-  const profileMenuItems = session?.user?.role === 'ADMIN' ? [
+  const normalizedRole = normalizeRole(session?.user?.role);
+
+  const profileMenuItems = normalizedRole === 'ADMIN' ? [
     { href: '/dashboard/admin', label: 'Admin Dashboard', icon: Shield },
     { href: '/dashboard/admin/users', label: 'Manage Users', icon: User },
     { href: '/profile', label: 'Profile', icon: User },
     { href: '/settings', label: 'Settings', icon: Settings },
-  ] : session?.user?.role === 'RIDER' ? [
+  ] : normalizedRole === 'RIDER' ? [
     { href: '/dashboard/rider', label: 'Rider Dashboard', icon: BarChart2 },
     { href: '/dashboard/rider/rides', label: 'My Rides', icon: Car },
     { href: '/dashboard/rider/earnings', label: 'Earnings', icon: CreditCard },
@@ -263,10 +263,10 @@ export default function Navbar() {
                 </>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Link href="/auth/login" className="btn-ghost text-sm py-2 px-4 hidden sm:flex">
+                  <Link href="/login" className="btn-ghost text-sm py-2 px-4 hidden sm:flex">
                     Login
                   </Link>
-                  <Link href="/auth/register" className="btn-primary text-sm py-2 px-5">
+                  <Link href="/register" className="btn-primary text-sm py-2 px-5">
                     Get Started
                   </Link>
                 </div>
@@ -314,10 +314,10 @@ export default function Navbar() {
                 })}
                 {!session && (
                   <div className="flex gap-2 pt-2">
-                    <Link href="/auth/login" onClick={() => setMobileOpen(false)} className="btn-secondary flex-1 text-sm py-2.5 text-center">
+                    <Link href="/login" onClick={() => setMobileOpen(false)} className="btn-secondary flex-1 text-sm py-2.5 text-center">
                       Login
                     </Link>
-                    <Link href="/auth/register" onClick={() => setMobileOpen(false)} className="btn-primary flex-1 text-sm py-2.5 text-center">
+                    <Link href="/register" onClick={() => setMobileOpen(false)} className="btn-primary flex-1 text-sm py-2.5 text-center">
                       Register
                     </Link>
                   </div>

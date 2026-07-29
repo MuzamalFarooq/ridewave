@@ -117,7 +117,7 @@ export default function RideDetailPage({ params }) {
   const totalAmount = ride ? ride.pricePerSeat * seatsBooked : 0;
 
   const handleBook = async () => {
-    if (!session) { router.push('/auth/login'); return; }
+    if (!session) { router.push('/login'); return; }
     setBookingLoading(true);
     try {
       const res = await fetch('/api/bookings', {

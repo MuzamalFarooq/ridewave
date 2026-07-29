@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { sendVerificationEmail } from '@/lib/email';
 import { nanoid } from 'nanoid';
+import { normalizeRole } from '@/lib/auth-redirects';
 
 export async function POST(request) {
   try {
@@ -42,6 +43,8 @@ export async function POST(request) {
       }
     }
 
+    const normalizedRole = normalizeRole(role);
+
     // Create user
     const user = await prisma.user.create({
       data: {
@@ -49,7 +52,7 @@ export async function POST(request) {
         email: email.toLowerCase(),
         phone: phone || null,
         password: hashedPassword,
-        role: role === 'RIDER' ? 'RIDER' : 'TRAVELER',
+        role: normalizedRole,
         referralCode: nanoid(8).toUpperCase(),
         referredBy: referredById,
         profile: {

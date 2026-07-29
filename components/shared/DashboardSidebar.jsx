@@ -12,6 +12,7 @@ import {
   Bike, MapPin, Menu, X, Navigation
 } from 'lucide-react';
 import { useSocket } from '@/contexts/SocketContext';
+import { normalizeRole } from '@/lib/auth-redirects';
 
 const navConfig = {
   TRAVELER: [
@@ -59,7 +60,7 @@ export default function DashboardSidebar({ user }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const role = user?.role || 'TRAVELER';
+  const role = normalizeRole(user?.role || 'TRAVELER');
   const navItems = navConfig[role] || navConfig.TRAVELER;
 
   const roleColors = { TRAVELER: 'from-violet-500 to-purple-600', RIDER: 'from-blue-500 to-indigo-600', ADMIN: 'from-red-500 to-rose-600' };

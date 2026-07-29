@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Car, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getDashboardPath, isAuthorizedForPath, normalizeRole } from '@/lib/auth-redirects';
 
 const GoogleIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24">
@@ -20,7 +21,10 @@ const GoogleIcon = ({ className }) => (
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard/traveler';
+  const requestedCallback = searchParams.get('callbackUrl');
+  const callbackUrl = requestedCallback && (requestedCallback.startsWith('/dashboard') || requestedCallback.startsWith('/profile') || requestedCallback.startsWith('/settings'))
+    ? requestedCallback
+    : null;
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -41,8 +45,14 @@ function LoginForm() {
       if (result?.error) {
         toast.error(result.error);
       } else {
+        const session = await getSession();
+        const role = normalizeRole(session?.user?.role);
+        const targetPath = callbackUrl && isAuthorizedForPath(role, callbackUrl)
+          ? callbackUrl
+          : getDashboardPath(role);
+
         toast.success('Welcome back!');
-        router.push(callbackUrl);
+        router.push(targetPath);
         router.refresh();
       }
     } catch (error) {
@@ -55,7 +65,7 @@ function LoginForm() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      await signIn('google', { callbackUrl });
+      await signIn('google', { callbackUrl: '/dashboard' });
     } finally {
       setGoogleLoading(false);
     }
@@ -149,7 +159,7 @@ function LoginForm() {
           <h2 className="text-2xl font-outfit font-bold mb-2">Sign in to your account</h2>
           <p className="text-sm mb-8" style={{ color: 'var(--text-muted)' }}>
             Don't have an account?{' '}
-            <Link href="/auth/register" className="font-medium" style={{ color: 'var(--primary)' }}>
+            <Link href="/register" className="font-medium" style={{ color: 'var(--primary)' }}>
               Create one free
             </Link>
           </p>
@@ -198,7 +208,7 @@ function LoginForm() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Password</label>
-                <Link href="/auth/forgot-password" className="text-xs" style={{ color: 'var(--primary)' }}>
+                <Link href="/forgot-password" className="text-xs" style={{ color: 'var(--primary)' }}>
                   Forgot password?
                 </Link>
               </div>

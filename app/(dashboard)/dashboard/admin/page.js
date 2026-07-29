@@ -7,7 +7,8 @@ export const metadata = { title: 'Admin Dashboard — RideWave' };
 
 export default async function AdminDashboardPage() {
   const session = await auth();
-  if (!session || session.user.role !== 'ADMIN') redirect('/auth/login');
+  if (!session) redirect('/login');
+  if (session.user.role !== 'ADMIN') redirect('/forbidden');
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);

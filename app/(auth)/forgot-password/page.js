@@ -140,7 +140,7 @@ export default function ForgotPasswordPage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                <Link href="/auth/login" className="back-anchor">
+                <Link href="/login" className="back-anchor">
                   <ArrowLeft size={16} />
                   Back to Login
                 </Link>
@@ -207,7 +207,7 @@ export default function ForgotPasswordPage() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.45 }}
               >
-                <Link href="/auth/login" className="back-anchor">
+                <Link href="/login" className="back-anchor">
                   <ArrowLeft size={16} />
                   Back to Login
                 </Link>

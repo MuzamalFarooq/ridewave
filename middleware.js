@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { getDashboardPath, normalizeRole } from './lib/auth-redirects';
 
 export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
+  const role = normalizeRole(token?.role);
 
-  // Protected dashboard routes
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/profile') || pathname.startsWith('/settings')) {
     if (!token) {
       const url = req.nextUrl.clone();
@@ -14,28 +15,31 @@ export async function middleware(req) {
       return NextResponse.redirect(url);
     }
 
-    // Admin-only routes
-    if (pathname.startsWith('/dashboard/admin') && token.role !== 'ADMIN') {
+    if (pathname.startsWith('/dashboard/admin') && role !== 'ADMIN') {
       const url = req.nextUrl.clone();
-      url.pathname = token.role === 'RIDER' ? '/dashboard/rider' : '/dashboard/traveler';
+      url.pathname = '/forbidden';
       return NextResponse.redirect(url);
     }
 
-    // Rider-only routes
-    if (pathname.startsWith('/dashboard/rider') && token.role === 'TRAVELER') {
+    if (pathname.startsWith('/dashboard/rider') && role !== 'RIDER') {
       const url = req.nextUrl.clone();
-      url.pathname = '/dashboard/traveler';
+      url.pathname = '/forbidden';
+      return NextResponse.redirect(url);
+    }
+
+    if ((pathname.startsWith('/dashboard/traveler') || pathname.startsWith('/dashboard/user')) && role !== 'TRAVELER') {
+      const url = req.nextUrl.clone();
+      url.pathname = '/forbidden';
       return NextResponse.redirect(url);
     }
   }
 
-  // Redirect logged-in users away from auth pages
   if ((pathname.startsWith('/auth/login') || pathname.startsWith('/auth/register')) && token) {
-    const url = req.nextUrl.clone();
-    if (token.role === 'ADMIN') url.pathname = '/dashboard/admin';
-    else if (token.role === 'RIDER') url.pathname = '/dashboard/rider';
-    else url.pathname = '/dashboard/traveler';
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL(getDashboardPath(role), req.url));
+  }
+
+  if (pathname === '/dashboard' && token) {
+    return NextResponse.redirect(new URL(getDashboardPath(role), req.url));
   }
 
   return NextResponse.next();
@@ -43,6 +47,7 @@ export async function middleware(req) {
 
 export const config = {
   matcher: [
+    '/dashboard',
     '/dashboard/:path*',
     '/profile/:path*',
     '/settings/:path*',

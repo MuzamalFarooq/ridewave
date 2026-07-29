@@ -8,8 +8,9 @@ import {
   Car, Bike, Mail, Lock, User, Phone, Eye, EyeOff,
   ArrowRight, ArrowLeft, CheckCircle, Shield
 } from 'lucide-react';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import toast from 'react-hot-toast';
+import { getDashboardPath, normalizeRole } from '@/lib/auth-redirects';
 
 const GoogleIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24">
@@ -88,7 +89,9 @@ export default function RegisterPage() {
         redirect: false,
       });
 
-      router.push(formData.role === 'RIDER' ? '/dashboard/rider' : '/dashboard/traveler');
+      const session = await getSession();
+      const role = normalizeRole(session?.user?.role);
+      router.push(getDashboardPath(role));
     } catch {
       toast.error('Something went wrong. Please try again.');
     } finally {
@@ -96,7 +99,7 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleSignup = () => signIn('google', { callbackUrl: '/dashboard/traveler' });
+  const handleGoogleSignup = () => signIn('google', { callbackUrl: '/dashboard' });
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--bg-base)' }}>
@@ -112,7 +115,7 @@ export default function RegisterPage() {
           <h2 className="text-xl font-semibold mt-4 mb-1">Create your account</h2>
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
             Already have one?{' '}
-            <Link href="/auth/login" style={{ color: 'var(--primary)' }} className="font-medium">
+            <Link href="/login" style={{ color: 'var(--primary)' }} className="font-medium">
               Sign in
             </Link>
           </p>
@@ -188,7 +191,7 @@ export default function RegisterPage() {
                   className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border font-medium text-sm mb-4 transition-all hover:shadow-md"
                   style={{ borderColor: 'var(--border)', color: 'var(--text-primary)', background: 'var(--bg-elevated)' }}
                 >
-                  <Chrome className="w-5 h-5" style={{ color: '#4285F4' }} />
+                  <GoogleIcon className="w-5 h-5" />
                   Sign up with Google
                 </button>
 

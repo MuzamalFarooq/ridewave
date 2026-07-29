@@ -74,7 +74,7 @@ function ResetPasswordForm() {
       toast.success('Password reset successfully!');
 
       setTimeout(() => {
-        router.push('/auth/login');
+        router.push('/login');
       }, 2500);
     } catch (err) {
       toast.error(err.message || 'Something went wrong. Try again.');
@@ -110,11 +110,11 @@ function ResetPasswordForm() {
               <p className="rp-subtitle">
                 This password reset link is missing or invalid. Please request a new one.
               </p>
-              <Link href="/auth/forgot-password" className="btn-primary-link">
+              <Link href="/forgot-password" className="btn-primary-link">
                 Request New Link
               </Link>
               <div className="back-link">
-                <Link href="/auth/login" className="back-anchor">
+                <Link href="/login" className="back-anchor">
                   <ArrowLeft size={16} />
                   Back to Login
                 </Link>
@@ -266,7 +266,7 @@ function ResetPasswordForm() {
               </motion.form>
 
               <div className="back-link">
-                <Link href="/auth/login" className="back-anchor">
+                <Link href="/login" className="back-anchor">
                   <ArrowLeft size={16} />
                   Back to Login
                 </Link>

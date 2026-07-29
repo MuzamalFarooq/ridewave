@@ -57,7 +57,7 @@ export default function BecomeRiderPage() {
                 Turn your daily commutes into a source of income. Join 12,000+ verified riders on Pakistan's most trusted ride-sharing platform and earn on your own terms.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href={session ? '/dashboard/rider' : '/auth/register?role=RIDER'}>
+                <Link href={session ? '/dashboard/rider' : '/register?role=RIDER'}>
                   <motion.button
                     whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(99,102,241,0.4)' }}
                     whileTap={{ scale: 0.97 }}
@@ -183,7 +183,7 @@ export default function BecomeRiderPage() {
           <p className="mb-8 text-lg" style={{ color: 'var(--text-secondary)' }}>
             Join 12,000+ riders. It only takes 5 minutes to get started.
           </p>
-          <Link href={session ? '/dashboard/rider' : '/auth/register?role=RIDER'}>
+          <Link href={session ? '/dashboard/rider' : '/register?role=RIDER'}>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
