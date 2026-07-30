@@ -22,9 +22,9 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedCallback = searchParams.get('callbackUrl');
-  const callbackUrl = requestedCallback && (requestedCallback.startsWith('/dashboard') || requestedCallback.startsWith('/profile') || requestedCallback.startsWith('/settings'))
+  const callbackUrl = requestedCallback && (requestedCallback.startsWith('/dashboard') || requestedCallback.startsWith('/profile') || requestedCallback.startsWith('/settings') || requestedCallback.startsWith('/find-ride') || requestedCallback.startsWith('/rides/') || requestedCallback.startsWith('/bookings'))
     ? requestedCallback
-    : null;
+    : '/find-ride';
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -65,7 +65,11 @@ function LoginForm() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/find-ride' });
+      const targetUrl = callbackUrl && (callbackUrl.startsWith('/dashboard') || callbackUrl.startsWith('/profile') || callbackUrl.startsWith('/settings') || callbackUrl.startsWith('/find-ride') || callbackUrl.startsWith('/rides/') || callbackUrl.startsWith('/bookings'))
+        ? callbackUrl
+        : '/find-ride';
+
+      await signIn('google', { callbackUrl: targetUrl });
     } finally {
       setGoogleLoading(false);
     }

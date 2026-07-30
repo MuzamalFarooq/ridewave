@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -25,6 +25,11 @@ const STEPS = ['Account Type', 'Personal Info', 'Security'];
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedCallback = searchParams.get('callbackUrl');
+  const callbackUrl = requestedCallback && (requestedCallback.startsWith('/dashboard') || requestedCallback.startsWith('/profile') || requestedCallback.startsWith('/settings') || requestedCallback.startsWith('/find-ride') || requestedCallback.startsWith('/rides/') || requestedCallback.startsWith('/bookings'))
+    ? requestedCallback
+    : '/find-ride';
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -99,7 +104,7 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleSignup = () => signIn('google', { callbackUrl: '/find-ride' });
+  const handleGoogleSignup = () => signIn('google', { callbackUrl: callbackUrl });
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--bg-base)' }}>
