@@ -99,7 +99,7 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleSignup = () => signIn('google', { callbackUrl: '/dashboard' });
+  const handleGoogleSignup = () => signIn('google', { callbackUrl: '/find-ride' });
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--bg-base)' }}>

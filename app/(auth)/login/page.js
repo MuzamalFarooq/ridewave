@@ -5,7 +5,7 @@ import { getSession, signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Car, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Car, Mail, Lock, Eye, EyeOff, ArrowRight, Chrome } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getDashboardPath, isAuthorizedForPath, normalizeRole } from '@/lib/auth-redirects';
 
@@ -65,7 +65,7 @@ function LoginForm() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/dashboard' });
+      await signIn('google', { callbackUrl: '/find-ride' });
     } finally {
       setGoogleLoading(false);
     }
