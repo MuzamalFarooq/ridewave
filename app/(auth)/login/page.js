@@ -5,7 +5,7 @@ import { getSession, signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Car, Mail, Lock, Eye, EyeOff, ArrowRight, Chrome } from 'lucide-react';
+import { Car, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getDashboardPath, isAuthorizedForPath, normalizeRole } from '@/lib/auth-redirects';
 
@@ -177,7 +177,7 @@ function LoginForm() {
             className="w-full flex items-center justify-center gap-3 py-3 rounded-xl border font-medium text-sm mb-6 transition-all hover:shadow-md"
             style={{ borderColor: 'var(--border)', color: 'var(--text-primary)', background: 'var(--bg-elevated)' }}
           >
-            <Chrome className="w-5 h-5" style={{ color: '#4285F4' }} />
+            <GoogleIcon className="w-5 h-5" />
             {googleLoading ? 'Connecting...' : 'Continue with Google'}
           </motion.button>
 
