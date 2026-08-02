@@ -7,9 +7,11 @@ import Link from 'next/link';
 import {
   Search, MapPin, Navigation, Calendar, Users, Filter, X,
   Star, Car, Bike, Zap, Clock, ChevronDown, SlidersHorizontal,
-  Shield, ArrowRight, Loader2, AlertCircle
+  Shield, ArrowRight, Loader2, AlertCircle, Compass
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useUserLocation } from '@/contexts/LocationContext';
+import LocationPickerModal from '@/components/maps/LocationPickerModal';
 
 function RideCard({ ride }) {
   const amenityIcons = { 'AC': '❄️', 'WiFi': '📶', 'Music': '🎵', 'Luggage': '🧳' };
@@ -259,10 +261,11 @@ function FilterPanel({ filters, setFilters, onClose }) {
 function FindRideContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { userLocation, pickerModal, openPicker, closePicker } = useUserLocation();
 
   const [search, setSearch] = useState({
-    pickup: searchParams.get('pickup') || '',
-    destination: searchParams.get('destination') || '',
+    pickup: searchParams.get('pickup') || searchParams.get('from') || '',
+    destination: searchParams.get('destination') || searchParams.get('to') || '',
     date: searchParams.get('date') || format(new Date(), 'yyyy-MM-dd'),
     seats: searchParams.get('seats') || '1',
   });
@@ -272,6 +275,13 @@ function FindRideContent() {
   const [error, setError] = useState('');
   const [pagination, setPagination] = useState({ total: 0, page: 1, pages: 1 });
   const [showFilters, setShowFilters] = useState(false);
+
+  // Auto-fill pickup with detected user location if not passed in query params
+  useEffect(() => {
+    if (userLocation?.address && !search.pickup) {
+      setSearch((s) => ({ ...s, pickup: userLocation.address }));
+    }
+  }, [userLocation?.address]);
 
   const fetchRides = useCallback(async (page = 1) => {
     setLoading(true);
@@ -306,32 +316,74 @@ function FindRideContent() {
 
   return (
     <div className="min-h-screen pt-20" style={{ background: 'var(--bg-base)' }}>
+      {/* Location Picker Modal */}
+      <LocationPickerModal
+        isOpen={pickerModal.isOpen}
+        onClose={closePicker}
+        title={pickerModal.fieldType === 'from' ? 'Pick Pickup Location' : 'Pick Destination Location'}
+        initialAddress={pickerModal.initialAddress}
+        fieldType={pickerModal.fieldType}
+        onSelectLocation={(loc) => {
+          if (pickerModal.onSelect) pickerModal.onSelect(loc);
+        }}
+      />
+
       {/* Search Bar */}
       <div className="sticky top-16 z-30 border-b" style={{ background: 'var(--bg-elevated)', borderColor: 'var(--border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <form onSubmit={handleSearch} className="flex flex-wrap gap-3 items-end">
             <div className="flex-1 min-w-40">
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--primary)' }} />
+                <button
+                  type="button"
+                  title="Click to pick location on map"
+                  onClick={() => openPicker('from', search.pickup, (loc) => setSearch((s) => ({ ...s, pickup: loc.address })))}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-[var(--bg-surface)] transition-colors z-10"
+                >
+                  <MapPin className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                </button>
                 <input
                   type="text"
                   placeholder="From"
                   value={search.pickup}
                   onChange={(e) => setSearch((s) => ({ ...s, pickup: e.target.value }))}
-                  className="input-field pl-9 text-sm"
+                  className="input-field pl-9 pr-8 text-sm"
                 />
+                <button
+                  type="button"
+                  title="Pick exact location on map"
+                  onClick={() => openPicker('from', search.pickup, (loc) => setSearch((s) => ({ ...s, pickup: loc.address })))}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors"
+                >
+                  <Compass className="w-4 h-4" />
+                </button>
               </div>
             </div>
             <div className="flex-1 min-w-40">
               <div className="relative">
-                <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--accent)' }} />
+                <button
+                  type="button"
+                  title="Click to pick location on map"
+                  onClick={() => openPicker('to', search.destination, (loc) => setSearch((s) => ({ ...s, destination: loc.address })))}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-[var(--bg-surface)] transition-colors z-10"
+                >
+                  <Navigation className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+                </button>
                 <input
                   type="text"
                   placeholder="To"
                   value={search.destination}
                   onChange={(e) => setSearch((s) => ({ ...s, destination: e.target.value }))}
-                  className="input-field pl-9 text-sm"
+                  className="input-field pl-9 pr-8 text-sm"
                 />
+                <button
+                  type="button"
+                  title="Pick exact location on map"
+                  onClick={() => openPicker('to', search.destination, (loc) => setSearch((s) => ({ ...s, destination: loc.address })))}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+                >
+                  <Compass className="w-4 h-4" />
+                </button>
               </div>
             </div>
             <div>

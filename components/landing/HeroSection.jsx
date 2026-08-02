@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useUserLocation } from '@/contexts/LocationContext';
+import LocationPickerModal from '@/components/maps/LocationPickerModal';
 import {
   MapPin,
   Calendar,
@@ -18,16 +20,25 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock,
-  Star
+  Star,
+  Compass
 } from 'lucide-react';
 
 export default function HeroSection() {
   const router = useRouter();
+  const { userLocation, pickerModal, openPicker, closePicker } = useUserLocation();
   const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState('');
   const [passengers, setPassengers] = useState('1');
   const [isSearching, setIsSearching] = useState(false);
+
+  // Auto-fill pickup location when user location is detected on site load
+  useEffect(() => {
+    if (userLocation?.address && !pickup) {
+      setPickup(userLocation.address);
+    }
+  }, [userLocation?.address]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -52,6 +63,18 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen pt-24 pb-16 flex items-center justify-center overflow-hidden bg-slate-950">
+      {/* Location Picker Modal */}
+      <LocationPickerModal
+        isOpen={pickerModal.isOpen}
+        onClose={closePicker}
+        title={pickerModal.fieldType === 'from' ? 'Pick Pickup Location' : 'Pick Destination Location'}
+        initialAddress={pickerModal.initialAddress}
+        fieldType={pickerModal.fieldType}
+        onSelectLocation={(loc) => {
+          if (pickerModal.onSelect) pickerModal.onSelect(loc);
+        }}
+      />
+
       {/* Background Image with Gradient Overlay */}
       <div className="absolute inset-0 z-0">
         <img
@@ -159,47 +182,99 @@ export default function HeroSection() {
         >
           <div className="relative rounded-3xl border border-slate-800/80 bg-slate-900/70 p-4 sm:p-6 backdrop-blur-2xl shadow-2xl shadow-indigo-950/40">
             {/* Header Tabs */}
-            <div className="flex items-center gap-3 mb-4 border-b border-slate-800 pb-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
-                <Car className="w-3.5 h-3.5" /> Intercity & City Rides
-              </span>
-              <span className="text-xs text-slate-400 flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Instant Confirmation
-              </span>
+            <div className="flex items-center justify-between gap-3 mb-4 border-b border-slate-800 pb-3 flex-wrap">
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
+                  <Car className="w-3.5 h-3.5" /> Intercity & City Rides
+                </span>
+                <span className="text-xs text-slate-400 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Instant Confirmation
+                </span>
+              </div>
+              {userLocation?.address && (
+                <div className="text-xs text-indigo-300 flex items-center gap-1.5 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full">
+                  <MapPin className="w-3 h-3 text-indigo-400" />
+                  <span className="truncate max-w-[200px] sm:max-w-xs">Location: {userLocation.address.split(',')[0]}</span>
+                </div>
+              )}
             </div>
 
             <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
               {/* Pickup Location */}
               <div className="lg:col-span-3 relative group">
-                <label className="block text-xs font-medium text-slate-400 mb-1 pl-1">Pickup Location</label>
+                <div className="flex items-center justify-between mb-1 pl-1">
+                  <label className="block text-xs font-medium text-slate-400">Pickup Location</label>
+                  <button
+                    type="button"
+                    onClick={() => openPicker('from', pickup, (loc) => setPickup(loc.address))}
+                    className="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center gap-0.5 font-medium transition-colors"
+                  >
+                    <Compass className="w-3 h-3" /> Map
+                  </button>
+                </div>
                 <div className="relative flex items-center">
-                  <div className="absolute left-3.5 text-indigo-400">
+                  <button
+                    type="button"
+                    title="Click to pick location on map"
+                    onClick={() => openPicker('from', pickup, (loc) => setPickup(loc.address))}
+                    className="absolute left-3 text-indigo-400 hover:text-indigo-300 transition-colors p-1 rounded-md hover:bg-indigo-500/20"
+                  >
                     <MapPin className="w-4 h-4" />
-                  </div>
+                  </button>
                   <input
                     type="text"
                     value={pickup}
                     onChange={(e) => setPickup(e.target.value)}
                     placeholder="e.g. Islamabad, F-7"
-                    className="w-full pl-10 pr-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    className="w-full pl-10 pr-9 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                   />
+                  <button
+                    type="button"
+                    title="Pick exact location on map"
+                    onClick={() => openPicker('from', pickup, (loc) => setPickup(loc.address))}
+                    className="absolute right-2.5 text-slate-400 hover:text-indigo-400 transition-colors p-1 rounded-md hover:bg-slate-800"
+                  >
+                    <Compass className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
 
               {/* Destination */}
               <div className="lg:col-span-3 relative group">
-                <label className="block text-xs font-medium text-slate-400 mb-1 pl-1">Destination</label>
+                <div className="flex items-center justify-between mb-1 pl-1">
+                  <label className="block text-xs font-medium text-slate-400">Destination</label>
+                  <button
+                    type="button"
+                    onClick={() => openPicker('to', destination, (loc) => setDestination(loc.address))}
+                    className="text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-0.5 font-medium transition-colors"
+                  >
+                    <Compass className="w-3 h-3" /> Map
+                  </button>
+                </div>
                 <div className="relative flex items-center">
-                  <div className="absolute left-3.5 text-purple-400">
+                  <button
+                    type="button"
+                    title="Click to pick location on map"
+                    onClick={() => openPicker('to', destination, (loc) => setDestination(loc.address))}
+                    className="absolute left-3 text-purple-400 hover:text-purple-300 transition-colors p-1 rounded-md hover:bg-purple-500/20"
+                  >
                     <Navigation className="w-4 h-4" />
-                  </div>
+                  </button>
                   <input
                     type="text"
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
                     placeholder="e.g. Lahore, Gulberg"
-                    className="w-full pl-10 pr-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+                    className="w-full pl-10 pr-9 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
                   />
+                  <button
+                    type="button"
+                    title="Pick exact location on map"
+                    onClick={() => openPicker('to', destination, (loc) => setDestination(loc.address))}
+                    className="absolute right-2.5 text-slate-400 hover:text-purple-400 transition-colors p-1 rounded-md hover:bg-slate-800"
+                  >
+                    <Compass className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
 

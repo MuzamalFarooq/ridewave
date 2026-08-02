@@ -8,9 +8,11 @@ import {
   MapPin, Calendar, Search, Car, Bike, Star, Shield, Zap,
   Users, Globe, Award, ArrowRight, ChevronRight, Play,
   CheckCircle, MessageSquare, CreditCard, Navigation,
-  TrendingUp, Clock, Wifi, Lock, Heart, Smartphone
+  TrendingUp, Clock, Wifi, Lock, Heart, Smartphone, Compass
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useUserLocation } from '@/contexts/LocationContext';
+import LocationPickerModal from '@/components/maps/LocationPickerModal';
 
 // ========================
 // Animated Counter
@@ -69,10 +71,18 @@ function Section({ children, className = '', id }) {
 // ========================
 function HeroSearch() {
   const router = useRouter();
+  const { userLocation, pickerModal, openPicker, closePicker } = useUserLocation();
   const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState(format(new Date(), 'yyyy-MM-dd'));
   const [seats, setSeats] = useState(1);
+
+  // Auto-fill pickup location when user location is detected on site load
+  useEffect(() => {
+    if (userLocation?.address && !pickup) {
+      setPickup(userLocation.address);
+    }
+  }, [userLocation?.address]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -81,110 +91,171 @@ function HeroSearch() {
   };
 
   return (
-    <form onSubmit={handleSearch} className="hero-search">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Pickup */}
-        <div className="relative">
-          <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
-            From
-          </label>
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--primary-light)' }} />
-            <input
-              type="text"
-              placeholder="Pickup location"
-              value={pickup}
-              onChange={(e) => setPickup(e.target.value)}
-              className="input-field pl-10"
-              style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
-              required
-            />
-          </div>
-        </div>
+    <>
+      <LocationPickerModal
+        isOpen={pickerModal.isOpen}
+        onClose={closePicker}
+        title={pickerModal.fieldType === 'from' ? 'Pick Pickup Location' : 'Pick Destination Location'}
+        initialAddress={pickerModal.initialAddress}
+        fieldType={pickerModal.fieldType}
+        onSelectLocation={(loc) => {
+          if (pickerModal.onSelect) pickerModal.onSelect(loc);
+        }}
+      />
 
-        {/* Destination */}
-        <div className="relative">
-          <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
-            To
-          </label>
+      <form onSubmit={handleSearch} className="hero-search">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Pickup */}
           <div className="relative">
-            <Navigation className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--accent)' }} />
-            <input
-              type="text"
-              placeholder="Destination"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              className="input-field pl-10"
-              style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
-              required
-            />
-          </div>
-        </div>
-
-        {/* Date */}
-        <div>
-          <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
-            Date
-          </label>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--primary-light)' }} />
-            <input
-              type="date"
-              value={date}
-              min={format(new Date(), 'yyyy-MM-dd')}
-              onChange={(e) => setDate(e.target.value)}
-              className="input-field pl-10"
-              style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', colorScheme: 'dark' }}
-            />
-          </div>
-        </div>
-
-        {/* Seats + Search */}
-        <div>
-          <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
-            Seats
-          </label>
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--primary-light)' }} />
-              <select
-                value={seats}
-                onChange={(e) => setSeats(e.target.value)}
-                className="input-field pl-10 appearance-none"
-                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                From
+              </label>
+              <button
+                type="button"
+                onClick={() => openPicker('from', pickup, (loc) => setPickup(loc.address))}
+                className="text-[11px] text-indigo-300 hover:text-white flex items-center gap-0.5 font-medium transition-colors"
               >
-                {[1,2,3,4,5,6].map(n => (
-                  <option key={n} value={n} style={{ background: '#1a1a2e' }}>{n} seat{n > 1 ? 's' : ''}</option>
-                ))}
-              </select>
+                <Compass className="w-3 h-3 text-indigo-400" /> Map
+              </button>
             </div>
-            <motion.button
-              type="submit"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="btn-primary px-5 py-3 text-sm rounded-xl"
-              style={{ flexShrink: 0 }}
-            >
-              <Search className="w-4 h-4" />
-            </motion.button>
+            <div className="relative">
+              <button
+                type="button"
+                title="Click to pick location on map"
+                onClick={() => openPicker('from', pickup, (loc) => setPickup(loc.address))}
+                className="absolute left-3 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/10 transition-colors z-10"
+              >
+                <MapPin className="w-4 h-4" style={{ color: 'var(--primary-light)' }} />
+              </button>
+              <input
+                type="text"
+                placeholder="Pickup location"
+                value={pickup}
+                onChange={(e) => setPickup(e.target.value)}
+                className="input-field pl-10 pr-9"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
+                required
+              />
+              <button
+                type="button"
+                title="Pick exact location on map"
+                onClick={() => openPicker('from', pickup, (loc) => setPickup(loc.address))}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-white/60 hover:text-white transition-colors"
+              >
+                <Compass className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Destination */}
+          <div className="relative">
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                To
+              </label>
+              <button
+                type="button"
+                onClick={() => openPicker('to', destination, (loc) => setDestination(loc.address))}
+                className="text-[11px] text-pink-300 hover:text-white flex items-center gap-0.5 font-medium transition-colors"
+              >
+                <Compass className="w-3 h-3 text-pink-400" /> Map
+              </button>
+            </div>
+            <div className="relative">
+              <button
+                type="button"
+                title="Click to pick location on map"
+                onClick={() => openPicker('to', destination, (loc) => setDestination(loc.address))}
+                className="absolute left-3 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/10 transition-colors z-10"
+              >
+                <Navigation className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+              </button>
+              <input
+                type="text"
+                placeholder="Destination"
+                value={destination}
+                onChange={(e) => setDestination(e.target.value)}
+                className="input-field pl-10 pr-9"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
+                required
+              />
+              <button
+                type="button"
+                title="Pick exact location on map"
+                onClick={() => openPicker('to', destination, (loc) => setDestination(loc.address))}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-white/60 hover:text-white transition-colors"
+              >
+                <Compass className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
+              Date
+            </label>
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--primary-light)' }} />
+              <input
+                type="date"
+                value={date}
+                min={format(new Date(), 'yyyy-MM-dd')}
+                onChange={(e) => setDate(e.target.value)}
+                className="input-field pl-10"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', colorScheme: 'dark' }}
+              />
+            </div>
+          </div>
+
+          {/* Seats + Search */}
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: 'rgba(255,255,255,0.8)' }}>
+              Seats
+            </label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--primary-light)' }} />
+                <select
+                  value={seats}
+                  onChange={(e) => setSeats(e.target.value)}
+                  className="input-field pl-10 appearance-none"
+                  style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white' }}
+                >
+                  {[1,2,3,4,5,6].map(n => (
+                    <option key={n} value={n} style={{ background: '#1a1a2e' }}>{n} seat{n > 1 ? 's' : ''}</option>
+                  ))}
+                </select>
+              </div>
+              <motion.button
+                type="submit"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="btn-primary px-5 py-3 text-sm rounded-xl"
+                style={{ flexShrink: 0 }}
+              >
+                <Search className="w-4 h-4" />
+              </motion.button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Quick Filters */}
-      <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[rgba(255,255,255,0.1)]">
-        {['🚗 Cars Only', '🏍️ Bikes Only', '⚡ Instant Book', '👩 Women Only', '🐾 Pets OK'].map((tag) => (
-          <button
-            key={tag}
-            type="button"
-            className="px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:scale-105 border"
-            style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.08)' }}
-          >
-            {tag}
-          </button>
-        ))}
-      </div>
-    </form>
+        {/* Quick Filters */}
+        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[rgba(255,255,255,0.1)]">
+          {['🚗 Cars Only', '🏍️ Bikes Only', '⚡ Instant Book', '👩 Women Only', '🐾 Pets OK'].map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:scale-105 border"
+              style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)', background: 'rgba(255,255,255,0.08)' }}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </form>
+    </>
   );
 }
 
