@@ -4,10 +4,34 @@ import { motion } from 'framer-motion';
 import { Users, Car, Star, Award, Globe, Heart, Target, Zap } from 'lucide-react';
 
 const TEAM = [
-  { name: 'Muzamal Farooq', role: 'CEO & Co-Founder', bio: '10+ years in mobility tech. Ex-Careem.', color: '#6366f1' },
-  { name: 'Hira Rehman', role: 'CTO & Co-Founder', bio: 'Full-stack engineer. Built BlaBlaCar Pakistan ops.', color: '#ec4899' },
-  { name: 'Bilal Hussain', role: 'Head of Safety', bio: 'Former law enforcement. Passionate about safe travel.', color: '#10b981' },
-  { name: 'Ayesha Khan', role: 'Head of Design', bio: 'UX designer. Crafting premium digital experiences.', color: '#f59e0b' },
+  {
+    name: 'Muzamal Farooq',
+    role: 'CEO & Co-Founder',
+    bio: '10+ years in mobility tech. Ex-Careem.',
+    color: '#6366f1',
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    name: 'Hira Rehman',
+    role: 'CTO & Co-Founder',
+    bio: 'Full-stack engineer. Built BlaBlaCar Pakistan ops.',
+    color: '#ec4899',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    name: 'Bilal Hussain',
+    role: 'Head of Safety',
+    bio: 'Former law enforcement. Passionate about safe travel.',
+    color: '#10b981',
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80',
+  },
+  {
+    name: 'Ayesha Khan',
+    role: 'Head of Design',
+    bio: 'UX designer. Crafting premium digital experiences.',
+    color: '#f59e0b',
+    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
+  },
 ];
 
 const VALUES = [
@@ -90,14 +114,35 @@ export default function AboutPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-outfit font-bold text-center mb-10">Meet the <span className="gradient-text">Team</span></h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {TEAM.map(({ name, role, bio, color }, i) => (
-              <motion.div key={name} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="card-premium p-6 text-center">
-                <div className="w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold" style={{ background: `linear-gradient(135deg, ${color}, ${color}99)` }}>
-                  {name[0]}
+            {TEAM.map(({ name, role, bio, color, image }, i) => (
+              <motion.div
+                key={name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -6 }}
+                className="card-premium p-6 text-center group"
+              >
+                <div className="w-20 h-20 rounded-3xl overflow-hidden mx-auto mb-4 p-1 border border-slate-700/50 bg-slate-900/60 shadow-lg relative">
+                  {image ? (
+                    <img
+                      src={image}
+                      alt={name}
+                      className="w-full h-full object-cover rounded-2xl group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full rounded-2xl flex items-center justify-center text-white text-2xl font-bold"
+                      style={{ background: `linear-gradient(135deg, ${color}, ${color}99)` }}
+                    >
+                      {name[0]}
+                    </div>
+                  )}
                 </div>
-                <h3 className="font-bold">{name}</h3>
+                <h3 className="font-bold text-base">{name}</h3>
                 <p className="text-xs font-medium mb-2" style={{ color }}>{role}</p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{bio}</p>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>{bio}</p>
               </motion.div>
             ))}
           </div>
