@@ -161,7 +161,7 @@ export default function BecomeRiderPage() {
                   className="w-full flex items-center justify-between p-5 text-left"
                 >
                   <span className="font-medium">{q}</span>
-                  {openFaq === i ? <ChevronUp className="w-4 h-4 shrink-0" style={{ color: 'var(--primary)' }} /> : <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--text-muted)' }} />}
+                  {openFaq === i ? <ChevronUp className="w-4 h-4 shrink-0" style={{ color: 'var(--primary)' }} /> : <ChevronDown className="w-4 h-4 shrink-0" style={{ color: 'var(--text-muted)' }} />}
                 </button>
                 {openFaq === i && (
                   <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} className="px-5 pb-5">
