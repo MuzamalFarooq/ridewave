@@ -30,7 +30,7 @@ export default function PlacesAutocomplete({
       autocompleteRef.current = new window.google.maps.places.Autocomplete(inputRef.current, {
         types: ['(cities)'],
         componentRestrictions: { country: 'pk' },
-        fields: ['formatted_address', 'geometry', 'name'],
+        fields: ['formatted_address', 'geometry', 'name', 'place_id'],
       });
 
       autocompleteRef.current.addListener('place_changed', () => {
@@ -40,10 +40,11 @@ export default function PlacesAutocomplete({
         const address = place.formatted_address || place.name || '';
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
+        const place_id = place.place_id || null;
 
         setInputValue(address);
         onChange?.(address);
-        onPlaceSelect?.({ address, lat, lng });
+        onPlaceSelect?.({ address, formattedAddress: address, lat, lng, latitude: lat, longitude: lng, place_id, placeId: place_id });
       });
     };
 
