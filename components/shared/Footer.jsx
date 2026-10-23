@@ -61,7 +61,7 @@ const footerLinks = {
     { label: 'Help Center', href: '/faq' },
     { label: 'Contact Us', href: '/contact' },
     { label: 'Safety Guidelines', href: '/safety' },
-    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Privacy Policy', href: '/app/privacy' },
     { label: 'Terms of Service', href: '/terms' },
     { label: 'Cookie Policy', href: '/cookies' },
   ],
@@ -205,16 +205,27 @@ export default function Footer() {
               © 2025 RideWave Technologies. All rights reserved.
             </p>
             <div className="flex gap-4">
-              {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
-                <Link
-                  key={item}
-                  href={`/${item.toLowerCase().replace(/ /g, '-')}`}
-                  className="text-xs transition-colors hover:text-[var(--primary)]"
-                  style={{ color: 'var(--text-muted)' }}
-                >
-                  {item}
-                </Link>
-              ))}
+              <Link
+                href="/app/privacy"
+                className="text-xs transition-colors hover:text-[var(--primary)]"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                href="/terms"
+                className="text-xs transition-colors hover:text-[var(--primary)]"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                Terms of Service
+              </Link>
+              <Link
+                href="/cookies"
+                className="text-xs transition-colors hover:text-[var(--primary)]"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                Cookie Policy
+              </Link>
             </div>
           </div>
         </div>

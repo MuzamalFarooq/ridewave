@@ -384,7 +384,7 @@ function RegisterForm() {
                       I agree to the{' '}
                       <Link href="/terms" style={{ color: 'var(--primary)' }}>Terms of Service</Link>
                       {' '}and{' '}
-                      <Link href="/privacy" style={{ color: 'var(--primary)' }}>Privacy Policy</Link>
+                      <Link href="/app/privacy" style={{ color: 'var(--primary)' }}>Privacy Policy</Link>
                     </span>
                   </label>
 
