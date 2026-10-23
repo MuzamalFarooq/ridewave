@@ -8,7 +8,7 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 
 export const metadata = {
   title: {
-    default: 'RideWave — Premium AI-Powered Ride Booking Platform',
+    default: 'RideWave — Smart and Reliable Ride Booking',
     template: '%s | RideWave',
   },
   description:
@@ -24,13 +24,14 @@ export const metadata = {
     'cheap rides',
     'safe travel',
   ],
-  authors: [{ name: 'RideWave' }],
-  creator: 'RideWave',
+  authors: [{ name: 'Muzamal Farooq' }],
+  creator: 'Muzamal Farooq',
+  publisher: 'RideWave',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: process.env.NEXT_PUBLIC_APP_URL,
-    title: 'RideWave — Premium AI-Powered Ride Booking Platform',
+    title: 'RideWave — Smart and Reliable Ride Booking',
     description: 'Book safe, affordable rides with verified drivers. Real-time GPS tracking, live chat, and instant booking.',
     siteName: 'RideWave',
     images: [
