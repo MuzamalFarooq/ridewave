@@ -221,7 +221,7 @@ export default function Footer() {
               </Link>
               <Link
                 href="/cookies"
-                className="text-xs transition-colors hover:text-[var(--primary)]"
+                className="text-xs transition-colors hover:text-(--primary)"
                 style={{ color: 'var(--text-muted)' }}
               >
                 Cookie Policy
