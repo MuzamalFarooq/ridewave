@@ -5,7 +5,8 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== 'ADMIN') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (session.user?.role !== 'ADMIN') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');

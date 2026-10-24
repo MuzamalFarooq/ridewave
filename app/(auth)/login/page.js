@@ -47,9 +47,13 @@ function LoginForm() {
       } else {
         const session = await getSession();
         const role = normalizeRole(session?.user?.role);
-        const targetPath = callbackUrl && isAuthorizedForPath(role, callbackUrl)
-          ? callbackUrl
-          : getDashboardPath(role);
+        let targetPath = getDashboardPath(role);
+
+        if (requestedCallback && isAuthorizedForPath(role, requestedCallback)) {
+          targetPath = requestedCallback;
+        } else if (role === 'TRAVELER') {
+          targetPath = '/find-ride';
+        }
 
         toast.success('Welcome back!');
         router.push(targetPath);

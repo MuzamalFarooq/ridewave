@@ -6,8 +6,10 @@ import { createNotification } from '@/lib/notifications';
 export async function PATCH(request, { params }) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== 'ADMIN')
+    if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (session.user?.role !== 'ADMIN') {
       return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
 
     const { id } = await params;
     const { status, adminReply } = await request.json();

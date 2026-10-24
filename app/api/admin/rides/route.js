@@ -5,7 +5,10 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== 'ADMIN') {
+    if (!session) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (session.user?.role !== 'ADMIN') {
       return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
     }
 
@@ -45,3 +48,36 @@ export async function GET(request) {
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function PATCH(request) {
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    if (session.user?.role !== 'ADMIN') {
+      return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { rideId, isFeatured, status } = body || {};
+
+    if (!rideId) {
+      return NextResponse.json({ message: 'Ride ID is required' }, { status: 400 });
+    }
+
+    const updateData = {};
+    if (typeof isFeatured === 'boolean') updateData.isFeatured = isFeatured;
+    if (typeof status === 'string') updateData.status = status;
+
+    const ride = await prisma.ride.update({
+      where: { id: rideId },
+      data: updateData,
+    });
+
+    return NextResponse.json({ ride });
+  } catch (error) {
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
+}
+

@@ -29,6 +29,12 @@ export async function POST(request) {
       return NextResponse.json({ message: 'Invalid email address' }, { status: 400 });
     }
 
+    // Import and check if email matches admin email
+    const { isAdminEmail } = await import('@/lib/auth-security');
+    if (isAdminEmail(safeEmail)) {
+      return NextResponse.json({ message: 'An account with this email already exists' }, { status: 409 });
+    }
+
     await connectPrisma();
 
     const existingUser = await prisma.user.findUnique({ where: { email: safeEmail } });
@@ -51,14 +57,16 @@ export async function POST(request) {
       }
     }
 
-    const normalizedRole = normalizeRole(role);
+    // Never allow registration with ADMIN role
+    const requestedRole = normalizeRole(role);
+    const safeRole = requestedRole === 'RIDER' ? 'RIDER' : 'TRAVELER';
     const user = await prisma.user.create({
       data: {
         name: safeName,
         email: safeEmail,
         phone: typeof phone === 'string' && phone.trim() ? phone.trim() : null,
         password: hashedPassword,
-        role: normalizedRole,
+        role: safeRole,
         referralCode: nanoid(8).toUpperCase(),
         referredBy: referredById,
         profile: {

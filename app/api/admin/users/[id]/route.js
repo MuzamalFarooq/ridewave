@@ -5,7 +5,8 @@ import { prisma } from '@/lib/prisma';
 export async function PATCH(request, { params }) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== 'ADMIN') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (session.user?.role !== 'ADMIN') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
     const { id } = await params;
     const body = await request.json();
 
@@ -25,7 +26,8 @@ export async function PATCH(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     const session = await auth();
-    if (!session || session.user.role !== 'ADMIN') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    if (session.user?.role !== 'ADMIN') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
     const { id } = await params;
     await prisma.user.delete({ where: { id } });
     return NextResponse.json({ success: true });
