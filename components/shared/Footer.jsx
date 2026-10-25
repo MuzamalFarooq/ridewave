@@ -165,7 +165,7 @@ export default function Footer() {
                   <a
                     key={store}
                     href="#"
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl border transition-all hover:border-[var(--primary)] hover:shadow-md"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl border transition-all hover:border-(--primary) hover:shadow-md"
                     style={{ borderColor: 'var(--border)', color: 'var(--text-primary)', background: 'var(--bg-elevated)' }}
                   >
                     <span className="text-lg">{store === 'App Store' ? '🍎' : '🤖'}</span>
