@@ -156,7 +156,7 @@ export default function Footer() {
         </div>
 
         {/* App Store Buttons */}
-        <div className="mt-12 pt-8 border-t border-[var(--border)]">
+        <div className="mt-12 pt-8 border-t border-(--border)">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <p className="text-sm font-semibold mb-3" style={{ color: 'var(--text-primary)' }}>Download Our App</p>
