@@ -207,14 +207,14 @@ export default function Footer() {
             <div className="flex gap-4">
               <Link
                 href="/app/privacy"
-                className="text-xs transition-colors hover:text-[var(--primary)]"
+                className="text-xs transition-colors hover:text-(--primary)"
                 style={{ color: 'var(--text-muted)' }}
               >
                 Privacy Policy
               </Link>
               <Link
                 href="/terms"
-                className="text-xs transition-colors hover:text-[var(--primary)]"
+                className="text-xs transition-colors hover:text(--primary)"
                 style={{ color: 'var(--text-muted)' }}
               >
                 Terms of Service
