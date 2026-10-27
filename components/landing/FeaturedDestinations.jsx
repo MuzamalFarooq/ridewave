@@ -90,7 +90,7 @@ export default function FeaturedDestinations() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="mt-2 text-base text-slate-400 font-light"
+              className="mt-2 text-base text-slate-300 font-normal"
             >
               Top intercity carpooling corridors with highest frequency and top-rated drivers.
             </motion.p>

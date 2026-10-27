@@ -65,7 +65,7 @@ export default function WhyChooseUs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="mt-4 text-base sm:text-lg text-slate-400 font-light leading-relaxed"
+              className="mt-4 text-base sm:text-lg text-slate-300 font-normal leading-relaxed"
             >
               RideWave bridges cutting-edge mobile telemetry with rigorous safety protocols, giving drivers max earnings and passengers total peace of mind.
             </motion.p>
@@ -91,7 +91,7 @@ export default function WhyChooseUs() {
                         {item.title}
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                       </h4>
-                      <p className="text-xs text-slate-400 mt-0.5 font-light">{item.desc}</p>
+                      <p className="text-xs text-slate-300 mt-0.5 font-normal">{item.desc}</p>
                     </div>
                   </motion.div>
                 );
@@ -131,11 +131,11 @@ export default function WhyChooseUs() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-center">
                   <p className="text-2xl font-bold text-indigo-400 font-outfit">4.9 / 5.0</p>
-                  <p className="text-xs text-slate-400 mt-1">Average Rider Rating</p>
+                  <p className="text-xs text-slate-300 mt-1">Average Rider Rating</p>
                 </div>
                 <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-center">
                   <p className="text-2xl font-bold text-emerald-400 font-outfit">99.9%</p>
-                  <p className="text-xs text-slate-400 mt-1">On-Time Arrival Rate</p>
+                  <p className="text-xs text-slate-300 mt-1">On-Time Arrival Rate</p>
                 </div>
               </div>
             </div>

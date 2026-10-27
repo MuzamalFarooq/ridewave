@@ -74,7 +74,7 @@ export default function FeaturedRiders() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-base sm:text-lg text-slate-400 font-light"
+            className="mt-4 text-base sm:text-lg text-slate-300 font-normal"
           >
             Every rider is background-verified, identity-checked, and rated continuously by real travelers.
           </motion.p>
@@ -112,7 +112,7 @@ export default function FeaturedRiders() {
                         <ShieldCheck className="w-4 h-4 text-indigo-400" title="Verified Driver" />
                       )}
                     </div>
-                    <p className="text-xs text-slate-400 font-medium">{rider.role}</p>
+                    <p className="text-xs text-slate-300 font-medium">{rider.role}</p>
 
                     {/* Star Rating */}
                     <div className="flex items-center gap-1 mt-1 text-xs text-amber-400 font-semibold">
@@ -123,28 +123,28 @@ export default function FeaturedRiders() {
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 mb-5 font-light leading-relaxed italic">
+                <p className="text-xs text-slate-300 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 mb-5 font-normal leading-relaxed italic">
                   "{rider.bio}"
                 </p>
 
                 {/* Details List */}
                 <div className="space-y-2.5 text-xs text-slate-300">
                   <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950/50">
-                    <span className="text-slate-400 flex items-center gap-1.5">
+                    <span className="text-slate-300 flex items-center gap-1.5">
                       <Car className="w-3.5 h-3.5 text-indigo-400" /> Vehicle
                     </span>
                     <span className="font-semibold text-white">{rider.vehicle}</span>
                   </div>
 
                   <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950/50">
-                    <span className="text-slate-400 flex items-center gap-1.5">
+                    <span className="text-slate-300 flex items-center gap-1.5">
                       <Award className="w-3.5 h-3.5 text-purple-400" /> Completed Rides
                     </span>
                     <span className="font-semibold text-emerald-400">{rider.completedRides}</span>
                   </div>
 
                   <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950/50">
-                    <span className="text-slate-400 flex items-center gap-1.5">
+                    <span className="text-slate-300 flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-pink-400" /> Platform Exp.
                     </span>
                     <span className="font-semibold text-white">{rider.experience}</span>

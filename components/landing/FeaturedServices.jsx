@@ -79,7 +79,7 @@ export default function FeaturedServices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-base sm:text-lg text-slate-400 font-light"
+            className="mt-4 text-base sm:text-lg text-slate-300 font-normal"
           >
             Whether you want a daily commute, an intercity journey, or passive income from your vehicle, RideWave offers world-class tools.
           </motion.p>
@@ -114,7 +114,7 @@ export default function FeaturedServices() {
                   </h3>
                   <p className="text-xs font-semibold text-indigo-400 mt-0.5">{service.subtitle}</p>
 
-                  <p className="text-sm text-slate-400 mt-4 leading-relaxed font-light">
+                  <p className="text-sm text-slate-300 mt-4 leading-relaxed font-normal">
                     {service.description}
                   </p>
 

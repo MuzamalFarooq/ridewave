@@ -105,7 +105,7 @@ export default function StatsSection() {
                   <Counter end={stat.value} suffix={stat.suffix} />
                 </h3>
                 <p className="text-base font-semibold text-slate-200 mt-1">{stat.label}</p>
-                <p className="text-xs text-slate-400 mt-1 leading-relaxed">{stat.description}</p>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">{stat.description}</p>
 
                 {/* Decorative Bottom Bar */}
                 <div className={`h-1 w-0 group-hover:w-full bg-gradient-to-r ${stat.color} rounded-full transition-all duration-500 mt-4`} />

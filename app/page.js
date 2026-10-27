@@ -1,63 +1,47 @@
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import HeroSection from '@/components/landing/HeroSection';
-import StatsSection from '@/components/landing/StatsSection';
-import FeaturedServices from '@/components/landing/FeaturedServices';
+import TrustBenefits from '@/components/landing/TrustBenefits';
 import HowItWorks from '@/components/landing/HowItWorks';
-import WhyChooseUs from '@/components/landing/WhyChooseUs';
-import FeaturedDestinations from '@/components/landing/FeaturedDestinations';
-import FeaturedRiders from '@/components/landing/FeaturedRiders';
-import TestimonialsSection from '@/components/landing/TestimonialsSection';
-import AppPromotion from '@/components/landing/AppPromotion';
+import VehicleCategories from '@/components/landing/VehicleCategories';
+import DriverCta from '@/components/landing/DriverCta';
 import FaqSection from '@/components/landing/FaqSection';
-import NewsletterSection from '@/components/landing/NewsletterSection';
+import PublicCta from '@/components/landing/PublicCta';
 
 export const metadata = {
-  title: 'RideWave — Premium Ride Sharing & Intercity Travel',
+  title: 'RideWave — Premium Ride Booking & Shared Mobility',
   description:
-    'Book safe, affordable rides with verified drivers or earn money sharing your car or bike. Real-time GPS tracking, instant booking, and 24/7 support.',
+    'Experience comfortable rides with verified drivers. Real-time GPS tracking, transparent seat pricing, and scheduled journeys on RideWave.',
 };
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[#F8F6F0] dark:bg-[#102F28] text-[#242824] dark:text-[#F8F6F0] flex flex-col font-sans selection:bg-[#173F35] selection:text-white">
       {/* Sticky Navigation Bar */}
       <Navbar />
 
-      {/* Main Landing Content */}
+      {/* Main Public Content */}
       <main className="grow">
-        {/* 1. Hero Section & Glassmorphism Search */}
+        {/* 1. Hero Section & Quick Ride Booking Panel */}
         <HeroSection />
 
-        {/* 2. Scroll-Animated Statistics Counters */}
-        <StatsSection />
+        {/* 2. Trust and Service Benefits */}
+        <TrustBenefits />
 
-        {/* 3. Featured Mobility Services */}
-        <FeaturedServices />
-
-        {/* 4. How RideWave Works (3 Steps) */}
+        {/* 3. How RideWave Works (3 Steps) */}
         <HowItWorks />
 
-        {/* 5. Why Choose RideWave (10 Core Features + Telemetry Mockup) */}
-        <WhyChooseUs />
+        {/* 4. Supported Vehicle Categories */}
+        <VehicleCategories />
 
-        {/* 6. Featured Routes & Destinations */}
-        <FeaturedDestinations />
+        {/* 5. Driver Community & Onboarding Callout */}
+        <DriverCta />
 
-        {/* 7. Top Verified Drivers & Captains */}
-        <FeaturedRiders />
-
-        {/* 8. Testimonials Slider */}
-        <TestimonialsSection />
-
-        {/* 9. Mobile App Download Promotion */}
-        <AppPromotion />
-
-        {/* 10. Frequently Asked Questions Accordion */}
+        {/* 6. Frequently Asked Questions Accordion */}
         <FaqSection />
 
-        {/* 11. Newsletter Subscription Box */}
-        <NewsletterSection />
+        {/* 7. Public Closing Call to Action */}
+        <PublicCta />
       </main>
 
       {/* Production Footer */}

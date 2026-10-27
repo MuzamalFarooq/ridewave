@@ -8,32 +8,32 @@ export default function FaqSection() {
   const faqs = [
     {
       question: 'How do I search and book a ride on RideWave?',
-      answer: 'Simply enter your departure location, destination city, travel date, and required number of seats into the search bar. Browse verified driver profiles, select your preferred ride, and tap "Book Seat". You will receive instant SMS & in-app confirmation.',
+      answer: 'Enter your departure location, destination, travel date, and required number of seats into the search bar. Browse verified driver routes, select your preferred ride, and confirm your seat. You will receive immediate in-app and email confirmation.',
       category: 'Booking',
       icon: Car,
     },
     {
-      question: 'What payment methods are supported for ride fares?',
-      answer: 'RideWave supports instant cashless payments via Credit/Debit Cards, Stripe, JazzCash, and EasyPaisa wallet transfers, as well as direct cash payouts to the driver upon ride completion.',
+      question: 'What payment methods are supported on RideWave?',
+      answer: 'RideWave supports instant card checkout via Stripe, Pakistani mobile wallets (JazzCash and EasyPaisa), as well as transparent direct cash payment to your driver upon trip completion.',
       category: 'Payments',
       icon: CreditCard,
     },
     {
-      question: 'What is the cancellation & refund policy?',
-      answer: 'You can cancel any booking free of charge up to 6 hours before departure. Cancellations within 6 hours receive an 80% refund. If a driver cancels a ride, you receive a 100% immediate wallet refund plus a ride credit voucher.',
-      category: 'Cancellation',
-      icon: RefreshCw,
-    },
-    {
-      question: 'How does RideWave ensure safety for travelers and drivers?',
-      answer: 'All drivers pass identity (CNIC), driving license, and vehicle registration verification. We offer real-time GPS telemetry sharing, an in-app emergency SOS button, and 24/7 incident response monitoring.',
+      question: 'How does RideWave verify drivers and vehicles?',
+      answer: 'All registered drivers submit national identity (CNIC), an active driving license, and official vehicle registration documents. Our administrative verification team reviews and approves each profile before rides can be listed.',
       category: 'Safety',
       icon: ShieldCheck,
     },
     {
-      question: 'How do I register as a driver and offer seats on my car/bike?',
-      answer: 'Click on "Become a Rider" in the top navbar, fill in your personal details, upload your driving license, vehicle registration papers, and CNIC copy. Our team verifies your profile within 2 to 4 business hours.',
-      category: 'Rider Registration',
+      question: 'Can I cancel my ride booking if my plans change?',
+      answer: 'Yes. Travelers can cancel bookings through their Traveller Dashboard. Cancellations made well in advance free up your reserved seat for other co-travelers and follow the platform refund rules.',
+      category: 'Cancellation',
+      icon: RefreshCw,
+    },
+    {
+      question: 'How does real-time tracking and in-app chat work?',
+      answer: 'Once your booking is confirmed, you gain access to direct in-app messaging with your driver. During active trips, you can follow your vehicle on interactive Google Maps with live telemetry.',
+      category: 'Telemetry',
       icon: UserCheck,
     },
   ];
@@ -41,90 +41,76 @@ export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="py-24 bg-slate-900 border-t border-slate-800/80 relative">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="py-20 md:py-28 bg-[#F8F6F0] dark:bg-[#102F28] border-t border-[#E7E5DD] dark:border-[#23584B]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-xs font-bold uppercase tracking-widest text-indigo-400 px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20"
-          >
-            Got Questions?
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="mt-4 text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-outfit"
-          >
+        <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#173F35] dark:text-[#C6A76B] px-3.5 py-1.5 bg-[#DCE7DF]/60 dark:bg-[#173F35] rounded-full border border-[#E7E5DD] dark:border-[#23584B]">
+            Help Center
+          </span>
+          <h2 className="font-outfit font-extrabold text-3xl sm:text-4xl text-[#102F28] dark:text-[#F8F6F0] tracking-tight">
             Frequently Asked Questions
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="mt-4 text-base sm:text-lg text-slate-400 font-light"
-          >
-            Everything you need to know about booking rides, driver verification, safety, and payments.
-          </motion.p>
+          </h2>
+          <p className="text-sm sm:text-base text-[#242824] dark:text-[#F8F6F0] font-normal leading-relaxed">
+            Everything you need to know about booking rides, driver standards, and traveling with RideWave.
+          </p>
         </div>
 
-        {/* Animated Accordion List */}
-        <div className="space-y-4">
-          {faqs.map((faq, idx) => {
-            const isOpen = openIndex === idx;
+        {/* FAQ Accordion */}
+        <div className="space-y-3">
+          {faqs.map((faq, index) => {
+            const isOpen = openIndex === index;
             const Icon = faq.icon;
             return (
-              <motion.div
+              <div
                 key={faq.question}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.08 }}
-                className="rounded-2xl border border-slate-800 bg-slate-950/70 overflow-hidden transition-all duration-300 shadow-md"
+                className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                  isOpen
+                    ? 'bg-white dark:bg-[#173F35] border-[#173F35]/30 dark:border-[#C6A76B]/40 shadow-sm'
+                    : 'bg-white/70 dark:bg-[#173F35]/60 border-[#E7E5DD] dark:border-[#23584B] hover:border-[#173F35]/20'
+                }`}
               >
                 <button
-                  onClick={() => setOpenIndex(isOpen ? -1 : idx)}
-                  className="w-full p-6 text-left flex items-center justify-between gap-4 focus:outline-none hover:bg-slate-900/60 transition-colors"
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? -1 : index)}
+                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
+                  aria-expanded={isOpen}
                 >
                   <div className="flex items-center gap-3.5">
-                    <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 shrink-0">
-                      <Icon className="w-5 h-5" />
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                      isOpen
+                        ? 'bg-[#173F35] text-[#C6A76B]'
+                        : 'bg-[#DCE7DF]/60 dark:bg-[#102F28] text-[#173F35] dark:text-[#DCE7DF]'
+                    }`}>
+                      <Icon className="w-4 h-4" />
                     </div>
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400 block mb-0.5">
-                        {faq.category}
-                      </span>
-                      <h3 className="text-base sm:text-lg font-bold text-white font-outfit">
-                        {faq.question}
-                      </h3>
-                    </div>
+                    <span className="font-outfit font-bold text-base sm:text-lg text-[#102F28] dark:text-[#F8F6F0]">
+                      {faq.question}
+                    </span>
                   </div>
-
-                  <div className={`p-2 rounded-full bg-slate-900 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-indigo-400' : ''}`}>
-                    <ChevronDown className="w-5 h-5" />
-                  </div>
+                  <ChevronDown
+                    className={`w-5 h-5 text-[#2C322B] dark:text-[#DCE7DF] transition-transform duration-200 shrink-0 ${
+                      isOpen ? 'rotate-180 text-[#173F35] dark:text-[#C6A76B]' : ''
+                    }`}
+                  />
                 </button>
 
                 <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
                     >
-                      <div className="px-6 pb-6 pt-2 border-t border-slate-800/60 text-sm text-slate-300 font-light leading-relaxed pl-16">
+                      <div className="px-5 pb-6 sm:px-6 sm:pb-6 text-sm text-[#242824] dark:text-[#F8F6F0] leading-relaxed font-normal border-t border-[#E7E5DD]/60 dark:border-[#23584B]/60 pt-4">
                         {faq.answer}
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
             );
           })}
         </div>

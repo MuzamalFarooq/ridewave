@@ -1,112 +1,86 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Search, UserCheck, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Search, UserCheck, Navigation, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HowItWorks() {
   const steps = [
     {
-      step: '01',
-      title: 'Search Your Destination',
-      description: 'Enter your departure city, destination, travel date, and number of seats. Explore available rides or create a ride alert.',
+      num: '01',
+      title: 'Choose Pickup & Destination',
+      description: 'Enter your departure hub, final destination, preferred travel date, and number of required seats to view available scheduled rides.',
       icon: Search,
-      color: 'from-blue-500 to-indigo-500',
-      tag: 'Instant Search',
     },
     {
-      step: '02',
-      title: 'Choose Your Preferred Rider',
-      description: 'Filter verified drivers by ratings, vehicle comfort, luggage space, passenger reviews, and exact pick-up locations.',
+      num: '02',
+      title: 'Select Ride & Confirm Booking',
+      description: 'Review verified driver profiles, vehicle categories, luggage allowances, and exact route timing. Lock your seat with instant reservation.',
       icon: UserCheck,
-      color: 'from-purple-500 to-indigo-500',
-      tag: 'Verified Matches',
     },
     {
-      step: '03',
-      title: 'Book Instantly & Travel Safely',
-      description: 'Confirm your seat with safe cashless payment or cash. Enjoy real-time GPS telemetry, emergency SOS, and smooth journeys.',
-      icon: ShieldCheck,
-      color: 'from-emerald-500 to-teal-500',
-      tag: 'Peace of Mind',
+      num: '03',
+      title: 'Follow Your Ride & Travel',
+      description: 'Meet your driver at the confirmed pickup point, monitor your trip progression via live GPS telemetry, and arrive safely with complete peace of mind.',
+      icon: Navigation,
     },
   ];
 
   return (
-    <section className="py-24 bg-slate-900 border-t border-slate-800/80 relative overflow-hidden">
-      {/* Glow background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
-
+    <section id="how-it-works" className="py-20 md:py-28 bg-[#F8F6F0] dark:bg-[#102F28] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-xs font-bold uppercase tracking-widest text-indigo-400 px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20"
-          >
-            Simple 3-Step Process
-          </motion.span>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="mt-4 text-3xl sm:text-5xl font-extrabold text-white tracking-tight font-outfit"
-          >
+        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#173F35] dark:text-[#C6A76B] px-3.5 py-1.5 bg-[#DCE7DF]/60 dark:bg-[#173F35] rounded-full border border-[#E7E5DD] dark:border-[#23584B]">
+            Simple Journey
+          </span>
+          <h2 className="font-outfit font-extrabold text-3xl sm:text-4xl text-[#102F28] dark:text-[#FFFFFF] tracking-tight">
             How RideWave Works
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="mt-4 text-base sm:text-lg text-slate-400 font-light"
-          >
-            Booking a safe, comfortable ride or sharing your car takes less than two minutes.
-          </motion.p>
+          </h2>
+          <p className="text-sm sm:text-base text-[#242824] dark:text-[#F8F6F0] font-normal leading-relaxed">
+            Booking a safe, comfortable ride takes less than two minutes. Here is the seamless journey from search to destination.
+          </p>
         </div>
 
         {/* Steps Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-          {/* Connecting Line across Desktop Steps */}
-          <div className="hidden md:block absolute top-1/2 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-indigo-500/40 via-purple-500/40 to-emerald-500/40 -translate-y-12 z-0" />
-
           {steps.map((item, index) => {
             const Icon = item.icon;
             return (
               <motion.div
-                key={item.step}
-                initial={{ opacity: 0, y: 30 }}
+                key={item.num}
+                initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.15 }}
-                className="relative z-10 flex flex-col items-center text-center p-8 rounded-3xl bg-slate-950/70 border border-slate-800 hover:border-indigo-500/50 backdrop-blur-xl shadow-xl hover:-translate-y-2 transition-all duration-300 group"
+                transition={{ duration: 0.45, delay: index * 0.12 }}
+                className="relative flex flex-col p-8 rounded-3xl bg-white dark:bg-[#173F35] border border-[#E7E5DD] dark:border-[#23584B] shadow-sm hover:shadow-md transition-shadow group"
               >
-                {/* Step Badge Number */}
-                <div className="absolute -top-5 px-4 py-1 rounded-full bg-slate-900 border border-slate-700 text-xs font-bold text-indigo-400 shadow-md">
-                  STEP {item.step}
+                {/* Step Number Top Badge */}
+                <div className="flex items-center justify-between mb-6">
+                  <span className="font-outfit font-extrabold text-2xl text-[#C6A76B] dark:text-[#E2CF9F] tracking-tight">
+                    {item.num}
+                  </span>
+                  <div className="w-11 h-11 rounded-xl bg-[#173F35] dark:bg-[#102F28] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
+                    <Icon className="w-5 h-5 text-[#C6A76B]" />
+                  </div>
                 </div>
 
-                {/* Animated Icon Circle */}
-                <div className={`mt-3 mb-6 p-5 rounded-2xl bg-gradient-to-br ${item.color} text-white shadow-xl shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className="w-8 h-8" />
-                </div>
-
-                <span className="text-xs font-semibold text-indigo-400 mb-1">{item.tag}</span>
-                <h3 className="text-xl font-bold text-white mb-3 font-outfit group-hover:text-indigo-200 transition-colors">
+                <h3 className="font-outfit font-bold text-xl text-[#102F28] dark:text-[#FFFFFF] mb-3">
                   {item.title}
                 </h3>
-                <p className="text-sm text-slate-400 leading-relaxed font-light">
+                <p className="text-sm text-[#2C322B] dark:text-[#F8F6F0] font-normal leading-relaxed mb-6 flex-1">
                   {item.description}
                 </p>
 
-                {/* Arrow indicator for non-last steps on desktop */}
-                {index < steps.length - 1 && (
-                  <div className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 text-slate-600 group-hover:text-indigo-400 transition-colors">
-                    <ArrowRight className="w-6 h-6 animate-pulse" />
-                  </div>
-                )}
+                <div className="pt-4 border-t border-[#E7E5DD] dark:border-[#23584B]">
+                  <Link
+                    href="/find-ride"
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#173F35] dark:text-[#C6A76B] hover:underline"
+                  >
+                    <span>Search journeys</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
               </motion.div>
             );
           })}

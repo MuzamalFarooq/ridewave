@@ -114,7 +114,7 @@ export default function AppPromotion() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="mt-4 text-base sm:text-lg text-slate-400 font-light leading-relaxed"
+              className="mt-4 text-base sm:text-lg text-slate-300 font-normal leading-relaxed"
             >
               Experience seamless booking, live driver telemetry, instant SOS triggers, and zero-fee wallet transfers right on your iOS or Android smartphone.
             </motion.p>
@@ -140,7 +140,7 @@ export default function AppPromotion() {
                         {item.title}
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                       </h4>
-                      <p className="text-xs text-slate-400 mt-0.5 font-light">{item.desc}</p>
+                      <p className="text-xs text-slate-300 mt-0.5 font-normal">{item.desc}</p>
                     </div>
                   </motion.div>
                 );

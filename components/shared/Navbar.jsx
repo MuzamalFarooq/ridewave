@@ -10,8 +10,8 @@ import { useSocket } from '@/contexts/SocketContext';
 import { getDashboardPath, normalizeRole } from '@/lib/auth-redirects';
 import {
   Car, Bell, User, Menu, X, Sun, Moon, ChevronDown,
-  Search, MapPin, LogOut, Settings, BarChart2, Shield,
-  MessageSquare, Star, CreditCard, Heart, Home, Bike, Globe
+  Search, Shield, MessageSquare, Heart, Home, Bike,
+  BarChart2, Settings, LogOut, Compass, ArrowRight
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -28,7 +28,7 @@ export default function Navbar() {
   const notifRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 15);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -50,11 +50,11 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/find-ride', label: 'Find Ride', icon: Search },
-    { href: '/become-rider', label: 'Become Rider', icon: Car },
-    { href: '/about', label: 'About', icon: Shield },
-    { href: '/pricing', label: 'Pricing', icon: CreditCard },
-    { href: '/contact', label: 'Contact', icon: MessageSquare },
+    { href: '/#how-it-works', label: 'How It Works', icon: Shield },
+    { href: '/find-ride', label: 'Explore Rides', icon: Search },
+    { href: '/#vehicles', label: 'Vehicles', icon: Car },
+    { href: '/become-rider', label: 'Become a Driver', icon: Bike },
+    { href: '/contact', label: 'Help & Support', icon: MessageSquare },
   ];
 
   const normalizedRole = normalizeRole(session?.user?.role);
@@ -62,21 +62,21 @@ export default function Navbar() {
   const profileMenuItems = normalizedRole === 'ADMIN' ? [
     { href: '/dashboard/admin', label: 'Admin Dashboard', icon: Shield },
     { href: '/dashboard/admin/users', label: 'Manage Users', icon: User },
-    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/profile', label: 'My Profile', icon: User },
     { href: '/settings', label: 'Settings', icon: Settings },
   ] : normalizedRole === 'RIDER' ? [
-    { href: '/dashboard/rider', label: 'Rider Dashboard', icon: BarChart2 },
-    { href: '/dashboard/rider/rides', label: 'My Rides', icon: Car },
-    { href: '/dashboard/rider/earnings', label: 'Earnings', icon: CreditCard },
+    { href: '/dashboard/rider', label: 'Driver Dashboard', icon: BarChart2 },
+    { href: '/dashboard/rider/rides', label: 'My Posted Rides', icon: Car },
+    { href: '/dashboard/rider/earnings', label: 'Earnings', icon: BarChart2 },
     { href: '/dashboard/messages', label: 'Messages', icon: MessageSquare },
-    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/profile', label: 'My Profile', icon: User },
     { href: '/settings', label: 'Settings', icon: Settings },
   ] : [
-    { href: '/dashboard/traveler', label: 'My Dashboard', icon: BarChart2 },
+    { href: '/dashboard/traveler', label: 'Traveller Dashboard', icon: BarChart2 },
     { href: '/dashboard/traveler/bookings', label: 'My Bookings', icon: Car },
-    { href: '/dashboard/traveler/favorites', label: 'Favorites', icon: Heart },
+    { href: '/dashboard/traveler/favorites', label: 'Saved Rides', icon: Heart },
     { href: '/dashboard/messages', label: 'Messages', icon: MessageSquare },
-    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/profile', label: 'My Profile', icon: User },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
@@ -85,104 +85,117 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        initial={{ y: -100 }}
+        initial={{ y: -80 }}
         animate={{ y: 0 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled || !isHomePage
-            ? 'glass border-b border-[var(--glass-border)] shadow-lg'
-            : 'bg-transparent'
+            ? 'bg-[#F8F6F0]/95 dark:bg-[#102F28]/95 backdrop-blur-md border-b border-[#E7E5DD] dark:border-[#23584B] shadow-sm'
+            : 'bg-[#F8F6F0]/80 dark:bg-[#102F28]/80 backdrop-blur-sm border-b border-transparent'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-                <Car className="w-5 h-5 text-white" />
+            <Link href="/" className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#173F35] rounded-lg">
+              <div className="w-10 h-10 rounded-xl bg-[#173F35] text-white flex items-center justify-center shadow-md group-hover:bg-[#102F28] transition-colors relative overflow-hidden">
+                <Compass className="w-5 h-5 text-[#C6A76B] transition-transform duration-300 group-hover:rotate-45" />
               </div>
-              <span className="font-outfit font-bold text-xl gradient-text">RideWave</span>
+              <div className="flex flex-col">
+                <span className="font-outfit font-bold text-xl text-[#173F35] dark:text-[#F8F6F0] tracking-tight leading-none flex items-center gap-1">
+                  RideWave
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C6A76B]" />
+                </span>
+                <span className="text-[10px] font-semibold tracking-widest uppercase text-[#2C322B] dark:text-[#DCE7DF] mt-0.5">
+                  Premium Mobility
+                </span>
+              </div>
             </Link>
 
-            {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`nav-link ${pathname === link.href ? 'active' : ''}`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+            {/* Desktop Navigation Links */}
+            <div className="hidden lg:flex items-center gap-1 bg-white/70 dark:bg-[#173F35]/60 border border-[#E7E5DD] dark:border-[#23584B] px-3 py-1.5 rounded-full shadow-sm">
+              {navLinks.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`text-sm font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${
+                      isActive
+                        ? 'bg-[#173F35] text-white shadow-xs'
+                        : 'text-[#242824] dark:text-[#F8F6F0] hover:text-[#173F35] dark:hover:text-[#C6A76B] hover:bg-[#DCE7DF]/40 dark:hover:bg-[#19463B]'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Theme Toggle */}
-              <motion.button
-                whileTap={{ scale: 0.9 }}
+              <button
                 onClick={toggleTheme}
-                className="btn-ghost w-9 h-9 p-0 rounded-full"
+                className="w-9 h-9 flex items-center justify-center rounded-full text-[#242824] dark:text-[#F8F6F0] hover:bg-[#DCE7DF]/50 dark:hover:bg-[#173F35] border border-transparent hover:border-[#E7E5DD] dark:hover:border-[#23584B] transition-colors focus:outline-none"
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? (
-                  <Sun className="w-4 h-4" />
+                  <Sun className="w-4 h-4 text-[#C6A76B]" />
                 ) : (
-                  <Moon className="w-4 h-4" />
+                  <Moon className="w-4 h-4 text-[#173F35]" />
                 )}
-              </motion.button>
+              </button>
 
               {session ? (
                 <>
-                  {/* Notification Bell */}
+                  {/* Notifications */}
                   <div className="relative" ref={notifRef}>
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
+                    <button
                       onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
-                      className="btn-ghost w-9 h-9 p-0 rounded-full relative"
+                      className="w-9 h-9 flex items-center justify-center rounded-full text-[#242824] dark:text-[#F8F6F0] hover:bg-[#DCE7DF]/50 dark:hover:bg-[#173F35] border border-transparent hover:border-[#E7E5DD] dark:hover:border-[#23584B] transition-colors relative focus:outline-none"
                       aria-label="Notifications"
                     >
                       <Bell className="w-4 h-4" />
                       {unreadCount > 0 && (
                         <span className="notification-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
                       )}
-                    </motion.button>
+                    </button>
 
                     <AnimatePresence>
                       {notifOpen && (
                         <motion.div
-                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          initial={{ opacity: 0, y: 8, scale: 0.96 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.96 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute right-0 top-12 w-80 glass-card p-2 z-50"
+                          className="absolute right-0 top-12 w-80 bg-white dark:bg-[#173F35] border border-[#E7E5DD] dark:border-[#23584B] rounded-2xl shadow-xl p-3 z-50"
                         >
-                          <div className="flex items-center justify-between px-3 py-2 mb-1">
-                            <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Notifications</h3>
+                          <div className="flex items-center justify-between px-2 py-1 mb-2 border-b border-[#E7E5DD] dark:border-[#23584B]">
+                            <h3 className="font-semibold text-sm text-[#242824] dark:text-[#F8F6F0]">Notifications</h3>
                             <Link
                               href="/notifications"
-                              className="text-xs font-medium"
-                              style={{ color: 'var(--primary)' }}
+                              className="text-xs font-semibold text-[#173F35] dark:text-[#C6A76B] hover:underline"
                               onClick={() => setNotifOpen(false)}
                             >
                               View all
                             </Link>
                           </div>
                           {notifications.length === 0 ? (
-                            <div className="text-center py-8">
-                              <Bell className="w-8 h-8 mx-auto mb-2" style={{ color: 'var(--text-muted)' }} />
-                              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No notifications yet</p>
+                            <div className="text-center py-6 text-[#4E554B] dark:text-[#DCE7DF]">
+                              <Bell className="w-6 h-6 mx-auto mb-1.5 opacity-60" />
+                              <p className="text-xs font-medium">No new notifications</p>
                             </div>
                           ) : (
-                            <div className="max-h-64 overflow-y-auto space-y-1">
+                            <div className="max-h-60 overflow-y-auto space-y-1.5">
                               {notifications.slice(0, 5).map((n, i) => (
                                 <div
                                   key={i}
-                                  className="px-3 py-2 rounded-lg hover:bg-[var(--bg-surface)] transition-colors cursor-pointer"
-                                  style={{ borderLeft: n.isRead ? 'none' : '3px solid var(--primary)' }}
+                                  className="p-2.5 rounded-xl hover:bg-[#F8F6F0] dark:hover:bg-[#102F28] transition-colors cursor-pointer text-xs"
+                                  style={{ borderLeft: n.isRead ? 'none' : '3px solid #173F35' }}
                                 >
-                                  <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>{n.title}</p>
-                                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>{n.body}</p>
+                                  <p className="font-semibold text-[#242824] dark:text-[#F8F6F0]">{n.title}</p>
+                                  <p className="text-[#3D443B] dark:text-[#DCE7DF] mt-0.5">{n.body}</p>
                                 </div>
                               ))}
                             </div>
@@ -194,63 +207,61 @@ export default function Navbar() {
 
                   {/* Profile Dropdown */}
                   <div className="relative" ref={profileRef}>
-                    <motion.button
-                      whileTap={{ scale: 0.95 }}
+                    <button
                       onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false); }}
-                      className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full hover:bg-[var(--bg-surface)] border border-[var(--border)] transition-all"
+                      className="flex items-center gap-2 pl-1.5 pr-3 py-1 rounded-full bg-white dark:bg-[#173F35] border border-[#E7E5DD] dark:border-[#23584B] hover:border-[#173F35] dark:hover:border-[#C6A76B] transition-all focus:outline-none"
                     >
-                      <div className="w-7 h-7 rounded-full overflow-hidden gradient-primary flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-full overflow-hidden bg-[#173F35] text-white flex items-center justify-center font-semibold text-xs">
                         {session.user?.image ? (
-                          <img src={session.user.image} alt={session.user.name} className="w-full h-full object-cover" />
+                          <img src={session.user.image} alt={session.user.name || 'User'} className="w-full h-full object-cover" />
                         ) : (
-                          <User className="w-4 h-4 text-white" />
+                          (session.user?.name?.[0] || 'U').toUpperCase()
                         )}
                       </div>
-                      <span className="text-sm font-medium hidden sm:block" style={{ color: 'var(--text-primary)', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span className="text-xs font-semibold text-[#242824] dark:text-[#F8F6F0] hidden sm:block max-w-[90px] truncate">
                         {session.user?.name?.split(' ')[0] || 'Account'}
                       </span>
-                      <ChevronDown className="w-3.5 h-3.5" style={{ color: 'var(--text-muted)', transform: profileOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-                    </motion.button>
+                      <ChevronDown className="w-3.5 h-3.5 text-[#242824] dark:text-[#F8F6F0] transition-transform duration-200" style={{ transform: profileOpen ? 'rotate(180deg)' : 'none' }} />
+                    </button>
 
                     <AnimatePresence>
                       {profileOpen && (
                         <motion.div
-                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          initial={{ opacity: 0, y: 8, scale: 0.96 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.96 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute right-0 top-12 w-56 glass-card p-2 z-50"
+                          className="absolute right-0 top-12 w-60 bg-white dark:bg-[#173F35] border border-[#E7E5DD] dark:border-[#23584B] rounded-2xl shadow-xl p-2 z-50"
                         >
-                          {/* User Info */}
-                          <div className="px-3 py-2 mb-1 border-b border-[var(--border)]">
-                            <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{session.user?.name}</p>
-                            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{session.user?.email}</p>
-                            <span className="badge badge-primary mt-1" style={{ fontSize: 10 }}>{session.user?.role}</span>
+                          <div className="px-3 py-2.5 mb-1 border-b border-[#E7E5DD] dark:border-[#23584B]">
+                            <p className="text-sm font-semibold text-[#242824] dark:text-[#F8F6F0] truncate">{session.user?.name}</p>
+                            <p className="text-xs text-[#3D443B] dark:text-[#DCE7DF] truncate">{session.user?.email}</p>
+                            <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#DCE7DF] dark:bg-[#102F28] text-[#173F35] dark:text-[#C6A76B]">
+                              {session.user?.role}
+                            </span>
                           </div>
 
-                          {/* Menu Items */}
-                          {profileMenuItems.map((item) => {
-                            const Icon = item.icon;
-                            return (
-                              <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setProfileOpen(false)}
-                                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors hover:bg-[var(--bg-surface)]"
-                                style={{ color: 'var(--text-secondary)' }}
-                              >
-                                <Icon className="w-4 h-4" />
-                                {item.label}
-                              </Link>
-                            );
-                          })}
+                          <div className="space-y-0.5">
+                            {profileMenuItems.map((item) => {
+                              const Icon = item.icon;
+                              return (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  onClick={() => setProfileOpen(false)}
+                                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#242824] dark:text-[#F8F6F0] hover:bg-[#F8F6F0] dark:hover:bg-[#102F28] hover:text-[#173F35] dark:hover:text-[#C6A76B] transition-colors"
+                                >
+                                  <Icon className="w-4 h-4 text-[#173F35] dark:text-[#C6A76B]" />
+                                  {item.label}
+                                </Link>
+                              );
+                            })}
+                          </div>
 
-                          {/* Sign Out */}
-                          <div className="border-t border-[var(--border)] mt-1 pt-1">
+                          <div className="border-t border-[#E7E5DD] dark:border-[#23584B] mt-1.5 pt-1.5">
                             <button
                               onClick={() => signOut({ callbackUrl: '/' })}
-                              className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm w-full text-left transition-colors hover:bg-red-50 dark:hover:bg-red-900/20"
-                              style={{ color: 'var(--danger)' }}
+                              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium w-full text-left text-[#B42318] hover:bg-[#B42318]/10 transition-colors"
                             >
                               <LogOut className="w-4 h-4" />
                               Sign Out
@@ -260,14 +271,29 @@ export default function Navbar() {
                       )}
                     </AnimatePresence>
                   </div>
+
+                  <Link
+                    href="/find-ride"
+                    className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-[#173F35] text-white hover:bg-[#102F28] transition-all shadow-xs"
+                  >
+                    <span>Book a Ride</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 </>
               ) : (
-                <div className="flex items-center gap-2">
-                  <Link href="/login" className="btn-ghost text-sm py-2 px-4 hidden sm:flex">
-                    Login
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <Link
+                    href="/login"
+                    className="text-xs sm:text-sm font-semibold text-[#242824] dark:text-[#F8F6F0] hover:text-[#173F35] dark:hover:text-[#C6A76B] px-3 py-2 rounded-full hover:bg-[#DCE7DF]/40 dark:hover:bg-[#173F35] transition-colors"
+                  >
+                    Sign In
                   </Link>
-                  <Link href="/register" className="btn-primary text-sm py-2 px-5">
-                    Get Started
+                  <Link
+                    href="/find-ride"
+                    className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold bg-[#173F35] text-white hover:bg-[#102F28] transition-all shadow-sm active:scale-95"
+                  >
+                    <span>Book a Ride</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               )}
@@ -275,8 +301,9 @@ export default function Navbar() {
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="btn-ghost w-9 h-9 p-0 rounded-full lg:hidden"
-                aria-label="Toggle menu"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-[#173F35] border border-[#E7E5DD] dark:border-[#23584B] text-[#242824] dark:text-[#F8F6F0] lg:hidden transition-colors focus:outline-none"
+                aria-label="Toggle navigation menu"
+                aria-expanded={mobileOpen}
               >
                 {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -284,45 +311,66 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Navigation Drawer */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden border-t border-[var(--glass-border)] glass"
+              transition={{ duration: 0.2 }}
+              className="lg:hidden border-t border-[#E7E5DD] dark:border-[#23584B] bg-[#F8F6F0] dark:bg-[#102F28] px-4 pt-3 pb-6 shadow-xl"
             >
-              <div className="px-4 py-4 space-y-1">
+              <div className="space-y-1">
                 {navLinks.map((link) => {
                   const Icon = link.icon;
+                  const isActive = pathname === link.href;
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
-                        pathname === link.href
-                          ? 'bg-[var(--primary)] text-white'
-                          : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface)]'
+                      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                        isActive
+                          ? 'bg-[#173F35] text-white'
+                          : 'text-[#242824] dark:text-[#F8F6F0] hover:bg-[#DCE7DF]/60 dark:hover:bg-[#173F35]'
                       }`}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-4 h-4 text-[#C6A76B]" />
                       {link.label}
                     </Link>
                   );
                 })}
-                {!session && (
-                  <div className="flex gap-2 pt-2">
-                    <Link href="/login" onClick={() => setMobileOpen(false)} className="btn-secondary flex-1 text-sm py-2.5 text-center">
-                      Login
-                    </Link>
-                    <Link href="/register" onClick={() => setMobileOpen(false)} className="btn-primary flex-1 text-sm py-2.5 text-center">
-                      Register
-                    </Link>
-                  </div>
-                )}
               </div>
+
+              {!session ? (
+                <div className="mt-4 pt-4 border-t border-[#E7E5DD] dark:border-[#23584B] flex flex-col gap-2">
+                  <Link
+                    href="/find-ride"
+                    onClick={() => setMobileOpen(false)}
+                    className="w-full text-center py-2.5 rounded-xl font-bold text-sm bg-[#173F35] text-white hover:bg-[#102F28] shadow-sm transition-colors"
+                  >
+                    Book a Ride
+                  </Link>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="w-full text-center py-2.5 rounded-xl font-semibold text-sm bg-white dark:bg-[#173F35] border border-[#E7E5DD] dark:border-[#23584B] text-[#242824] dark:text-[#F8F6F0] hover:bg-[#F8F6F0] transition-colors"
+                  >
+                    Sign In to Account
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-4 pt-4 border-t border-[#E7E5DD] dark:border-[#23584B] flex flex-col gap-2">
+                  <Link
+                    href={getDashboardLink()}
+                    onClick={() => setMobileOpen(false)}
+                    className="w-full text-center py-2.5 rounded-xl font-bold text-sm bg-[#173F35] text-white hover:bg-[#102F28] shadow-sm transition-colors"
+                  >
+                    Go to My Dashboard
+                  </Link>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

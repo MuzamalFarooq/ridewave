@@ -87,7 +87,7 @@ export default function TestimonialsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-base sm:text-lg text-slate-400 font-light"
+            className="mt-4 text-base sm:text-lg text-slate-300 font-normal"
           >
             Read genuine feedback from thousands of travelers who rely on RideWave every day.
           </motion.p>
@@ -114,7 +114,7 @@ export default function TestimonialsSection() {
               </div>
 
               {/* Review Text */}
-              <blockquote className="text-lg sm:text-xl text-slate-200 font-light leading-relaxed italic mb-8">
+              <blockquote className="text-lg sm:text-xl text-slate-200 font-normal leading-relaxed italic mb-8">
                 "{testimonials[currentIndex].text}"
               </blockquote>
 
@@ -132,7 +132,7 @@ export default function TestimonialsSection() {
                       <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     </h4>
                     <p className="text-xs text-indigo-400">{testimonials[currentIndex].role}</p>
-                    <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                    <p className="text-xs text-slate-300 flex items-center gap-1 mt-0.5">
                       <MapPin className="w-3 h-3 text-slate-500" />
                       {testimonials[currentIndex].location}
                     </p>

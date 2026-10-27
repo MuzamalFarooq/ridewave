@@ -47,7 +47,7 @@ export default function NewsletterSection() {
             Get Exclusive Travel Discounts & Route Updates
           </h2>
 
-          <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
             Subscribe to our weekly newsletter for zero-fee promo codes, new intercity route announcements, and driver tips.
           </p>
 
