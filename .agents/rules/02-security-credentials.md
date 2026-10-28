@@ -1,9 +1,10 @@
 # Rule 02: Authentication, Authorization & Credential Security
 
 ## Security Mandates
-1. **Zero Credential Leaks**:
+1. **Zero Credential Leaks & Strict `.env` Isolation**:
+   - Strictly follow Rule 06 (`06-never-access-environment-files.md`): NEVER open, read, inspect, print, or modify `.env` or any other environment file.
    - Never hardcode API keys, database connection strings, JWT secrets, Stripe secrets, or Cloudinary credentials into client files, server files, or documentation.
-   - All secrets must reside exclusively in environment variables loaded from `.env` / `.env.local` and mirrored in `.env.example`.
+   - All runtime secrets must reside exclusively in user-managed environment variables; reference variable names only via `.env.example` or code usages (`process.env.VARIABLE_NAME`).
    - Never print sensitive credentials or full user records (including hashed passwords or tokens) into console logs or responses.
 
 2. **Server-Side Authorization Enforcement**:

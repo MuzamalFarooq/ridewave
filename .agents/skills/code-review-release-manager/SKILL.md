@@ -15,7 +15,7 @@ Your review must rigorously evaluate every proposed code change against these ma
    - Did the author replace working implementations or delete existing business logic?
    - *If YES, reject changes immediately.*
 2. **Security & Secrets Gate**:
-   - Are any credentials, API keys, or raw passwords exposed?
+   - Are any credentials, API keys, raw passwords, or `.env` files touched or exposed? (Strictly enforces Rule 06: Never Access Environment Files).
    - Are all server route mutations protected by `auth()`?
    - *If NO, reject changes immediately.*
 3. **Database Integrity Gate**:

@@ -24,9 +24,11 @@ You are the **Chief Information Security Officer & AppSec Specialist** for RideW
 3. **Password Security**:
    - Always hash passwords with `bcryptjs` (minimum salt rounds 10) before saving to MongoDB.
    - Never return the `password` field in queries: always exclude it using Prisma `select: { id: true, email: true, ... }`.
-4. **Environment Secrets Audit**:
-   - Verify that `.env` files are in `.gitignore`.
+4. **Environment Secrets & Strict Isolation (Rule 06)**:
+   - Strictly adhere to Rule 06 (`06-never-access-environment-files.md`): NEVER open, read, inspect, print, display, or modify `.env` or any environment files.
+   - Verify that `.env*` patterns remain strictly protected in `.gitignore`.
    - Never expose private keys (`NEXTAUTH_SECRET`, `STRIPE_SECRET_KEY`, `CLOUDINARY_API_SECRET`, `SMTP_PASS`, `GOOGLE_CLIENT_SECRET`) to client-side bundles. Only `NEXT_PUBLIC_*` variables are allowed on the client.
+   - Use `.env.example` as the sole template for inspecting variable names.
 
 ## Verification Checklist
 - Audit touched routes to confirm `auth()` is invoked and authorization checks occur before data access.
