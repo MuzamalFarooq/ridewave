@@ -54,7 +54,7 @@ export default function Navbar() {
     { href: '/find-ride', label: 'Explore Rides', icon: Search },
     { href: '/#vehicles', label: 'Vehicles', icon: Car },
     { href: '/become-rider', label: 'Become a Driver', icon: Bike },
-    { href: '/contact', label: 'Help & Support', icon: MessageSquare },
+    { href: '/help', label: 'Help & Support', icon: MessageSquare },
   ];
 
   const normalizedRole = normalizeRole(session?.user?.role);

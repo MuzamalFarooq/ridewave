@@ -14,18 +14,19 @@ const footerNav = {
     { label: 'Become a Driver', href: '/become-rider' },
     { label: 'Driver Requirements', href: '/safety' },
     { label: 'Transparent Pricing', href: '/pricing' },
-    { label: 'Support & Assistance', href: '/contact' },
+    { label: 'Support & Assistance', href: '/help' },
   ],
   Company: [
     { label: 'About RideWave', href: '/about' },
-    { label: 'Help & FAQ', href: '/faq' },
-    { label: 'Contact Us', href: '/contact' },
+    { label: 'Help Centre', href: '/help' },
+    { label: 'Contact Support', href: '/contact' },
     { label: 'Platform Terms', href: '/about' },
   ],
   Legal: [
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Data Protection Notice', href: '/privacy-policy' },
     { label: 'Safety Guidelines', href: '/safety' },
+    { label: 'Report a Problem', href: '/help#contact' },
   ],
 };
 
