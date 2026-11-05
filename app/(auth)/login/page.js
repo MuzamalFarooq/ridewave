@@ -100,7 +100,7 @@ function LoginForm() {
           />
         ))}
 
-        <div className="text-center text-white z-10">
+        <div className="text-center text-[#171A17] z-10">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -114,7 +114,7 @@ function LoginForm() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-4xl font-outfit font-bold mb-4"
+            className="text-4xl font-outfit font-bold mb-4 text-[#171A17]"
           >
             Welcome to RideWave
           </motion.h1>
@@ -122,8 +122,7 @@ function LoginForm() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            style={{ color: 'rgba(255,255,255,0.7)' }}
-            className="text-lg max-w-xs mx-auto"
+            className="text-lg max-w-xs mx-auto text-[#2C322B]"
           >
             Your premium AI-powered ride-sharing platform. Travel smarter, arrive safer.
           </motion.p>
@@ -140,8 +139,8 @@ function LoginForm() {
               { value: '50K+', label: 'Rides' },
             ].map(({ value, label }) => (
               <div key={label} className="text-center">
-                <div className="text-2xl font-bold">{value}</div>
-                <div className="text-xs opacity-60">{label}</div>
+                <div className="text-2xl font-bold text-[#171A17]">{value}</div>
+                <div className="text-xs text-[#4E554B]">{label}</div>
               </div>
             ))}
           </motion.div>
