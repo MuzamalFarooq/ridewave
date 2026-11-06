@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Compass, Mail, MapPin, ShieldCheck, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 
 const footerNav = {
@@ -31,6 +32,11 @@ const footerNav = {
 };
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname === '/find-ride' || pathname === '/book-ride') {
+    return null;
+  }
+
   return (
     <footer className="bg-[#102F28] text-[#F8F6F0] border-t border-[#173F35] relative overflow-hidden">
       {/* Subtle background glow */}

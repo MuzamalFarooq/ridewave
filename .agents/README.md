@@ -1,5 +1,8 @@
 # RideWave Specialized Multi-Agent Development System
 
+> 🔒 **MANDATORY SECURITY INSTRUCTION FOR ALL AGENTS**:
+> **NEVER open, edit, view, read, inspect, or modify any `.env` file** (including `.env`, `.env.local`, `.env.production`, `.env.development`, or any variant). Never print or expose secrets. Complete all development tasks using application source code, schemas, and non-sensitive configuration only. Refer to `.agents/rules/06-never-access-environment-files.md`.
+
 Welcome to the **RideWave Multi-Agent Architecture** configured for Antigravity. This system transforms Antigravity into an elite, specialized software development team tailored specifically for the RideWave ride-booking platform ([https://ridewave.muzamal.site/](https://ridewave.muzamal.site/)).
 
 ---

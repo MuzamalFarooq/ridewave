@@ -17,6 +17,7 @@ import { normalizeRole } from '@/lib/auth-redirects';
 const navConfig = {
   TRAVELER: [
     { href: '/dashboard/traveler', label: 'Overview', icon: LayoutDashboard },
+    { href: '/find-ride', label: 'Book a Ride', icon: Navigation },
     { href: '/dashboard/traveler/bookings', label: 'My Bookings', icon: Car },
     { href: '/dashboard/traveler/favorites', label: 'Favorites', icon: Heart },
     { href: '/dashboard/messages', label: 'Messages', icon: MessageSquare },

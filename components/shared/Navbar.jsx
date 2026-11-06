@@ -50,9 +50,9 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/', label: 'Home', icon: Home },
+    { href: '/find-ride', label: 'Book a Ride', icon: Car },
     { href: '/#how-it-works', label: 'How It Works', icon: Shield },
-    { href: '/find-ride', label: 'Explore Rides', icon: Search },
-    { href: '/#vehicles', label: 'Vehicles', icon: Car },
+    { href: '/#vehicles', label: 'Vehicles', icon: Compass },
     { href: '/become-rider', label: 'Become a Driver', icon: Bike },
     { href: '/help', label: 'Help & Support', icon: MessageSquare },
   ];
@@ -81,6 +81,7 @@ export default function Navbar() {
   ];
 
   const isHomePage = pathname === '/';
+  const isMapBookingPage = pathname === '/find-ride' || pathname === '/book-ride';
 
   return (
     <>
@@ -89,6 +90,8 @@ export default function Navbar() {
         animate={{ y: 0 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isMapBookingPage ? 'max-md:hidden ' : ''
+        }${
           isScrolled || !isHomePage
             ? 'bg-[#F8F6F0]/95 dark:bg-[#102F28]/95 backdrop-blur-md border-b border-[#E7E5DD] dark:border-[#23584B] shadow-sm'
             : 'bg-[#F8F6F0]/80 dark:bg-[#102F28]/80 backdrop-blur-sm border-b border-transparent'
