@@ -245,12 +245,18 @@ export default function LocationPickerModal({
           });
 
           // Ensure map resizes properly after modal transition
-          setTimeout(() => {
-            if (mapInstanceRef.current && google.maps?.event) {
-              google.maps.event.trigger(mapInstanceRef.current, 'resize');
-              mapInstanceRef.current.setCenter(initialCenter);
-            }
-          }, 300);
+          [100, 300, 600].forEach((delay) => {
+            setTimeout(() => {
+              if (mapInstanceRef.current && window.google?.maps?.event) {
+                window.google.maps.event.trigger(mapInstanceRef.current, 'resize');
+                // Pan to current selected location or initial center
+                const currentCenter = selectedLocation.lat
+                  ? { lat: Number(selectedLocation.lat), lng: Number(selectedLocation.lng) }
+                  : initialCenter;
+                mapInstanceRef.current.setCenter(currentCenter);
+              }
+            }, delay);
+          });
 
           // Google Places Autocomplete Search Box
           if (searchInputRef.current && google.maps.places) {
@@ -289,30 +295,32 @@ export default function LocationPickerModal({
   useEffect(() => {
     if (!isOpen) return;
 
-    setSearchQuery(initialAddress || '');
+    const timer = setTimeout(() => {
+      setSearchQuery(initialAddress || '');
 
-    if (initialAddress) {
-      setIsGeocoding(true);
-      geocodeAddress(initialAddress)
-        .then((res) => {
-          if (res) {
-            setLocationState(res.lat, res.lng, res.formattedAddress || initialAddress);
-            updateMapAndMarker(res.lat, res.lng, 15);
-          }
-        })
-        .catch(() => {
-          detectGpsLocation();
-        })
-        .finally(() => setIsGeocoding(false));
-    } else {
-      detectGpsLocation();
-    }
+      if (initialAddress) {
+        setIsGeocoding(true);
+        geocodeAddress(initialAddress)
+          .then((res) => {
+            if (res) {
+              setLocationState(res.lat, res.lng, res.formattedAddress || initialAddress);
+              updateMapAndMarker(res.lat, res.lng, 15);
+            }
+          })
+          .catch(() => {
+            detectGpsLocation();
+          })
+          .finally(() => setIsGeocoding(false));
+      } else {
+        detectGpsLocation();
+      }
 
-    // Initialize Map
-    initMap();
+      // Initialize Map
+      initMap();
+    }, 0);
 
     return () => {
-      if (geoTimeoutRef.current) clearTimeout(geoTimeoutRef.current);
+      clearTimeout(timer);
       if (autocompleteRef.current && window.google?.maps?.event) {
         window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
       }
@@ -322,6 +330,51 @@ export default function LocationPickerModal({
       if (mapInstanceRef.current && window.google?.maps?.event) {
         window.google.maps.event.clearInstanceListeners(mapInstanceRef.current);
       }
+    };
+  }, [isOpen, initialAddress, detectGpsLocation, initMap, setLocationState, updateMapAndMarker]);
+
+  // Sync map center and marker whenever selectedLocation coordinates change
+  useEffect(() => {
+    if (!isOpen || !selectedLocation?.lat || !selectedLocation?.lng) return;
+    const lat = Number(selectedLocation.lat);
+    const lng = Number(selectedLocation.lng);
+    if (isNaN(lat) || isNaN(lng)) return;
+
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.panTo({ lat, lng });
+      mapInstanceRef.current.setZoom(16);
+    }
+    if (markerRef.current) {
+      markerRef.current.setPosition({ lat, lng });
+    }
+  }, [isOpen, selectedLocation.lat, selectedLocation.lng]);
+
+  // Observe map container resize and trigger Google Maps resize
+  useEffect(() => {
+    if (!isOpen || !mapRef.current) return;
+
+    let resizeObserver = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        if (mapInstanceRef.current && window.google?.maps?.event) {
+          window.google.maps.event.trigger(mapInstanceRef.current, 'resize');
+        }
+      });
+      resizeObserver.observe(mapRef.current);
+    }
+
+    const authFailHandler = (e) => {
+      setMapsState({
+        loading: false,
+        error: e?.detail?.message || 'Google Maps authorization failed. Please check Google Cloud Console API restrictions and billing.',
+      });
+    };
+
+    window.addEventListener('google-maps-auth-failure', authFailHandler);
+
+    return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener('google-maps-auth-failure', authFailHandler);
     };
   }, [isOpen]);
 
@@ -483,9 +536,13 @@ export default function LocationPickerModal({
             </div>
           )}
 
-          {/* Map & Error Container */}
-          <div className="relative flex-1 w-full bg-slate-950 min-h-0">
-            <div ref={mapRef} className="w-full h-full" />
+          {/* Map & Error Container with guaranteed height */}
+          <div className="relative flex-1 w-full bg-slate-950 min-h-[350px]">
+            <div
+              ref={mapRef}
+              className="w-full h-full"
+              style={{ width: '100%', height: '100%', minHeight: '350px' }}
+            />
 
             {/* Google Maps Loading State */}
             {mapsState.loading && (

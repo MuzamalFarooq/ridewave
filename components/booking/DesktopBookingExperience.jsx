@@ -68,7 +68,7 @@ export default function DesktopBookingExperience({ engine }) {
   ];
 
   return (
-    <div className="flex w-full h-[calc(100vh-64px)] overflow-hidden bg-[#F8F6F0] dark:bg-[#102F28]">
+    <div className="flex w-full h-[calc(100vh-80px)] mt-20 overflow-hidden bg-[#F8F6F0] dark:bg-[#102F28]">
       {/* ========================================================
           SECTION 1: NAVIGATION SIDEBAR (Collapsible & Responsive)
       ======================================================== */}

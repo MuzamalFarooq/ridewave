@@ -165,30 +165,69 @@ export default function RideBookingMap({
         directionsRendererRef.current = renderer;
 
         setLoading(false);
+
+        // Ensure map resizes properly after DOM settlement
+        [100, 300, 600].forEach((delay) => {
+          setTimeout(() => {
+            if (mapInstanceRef.current && window.google?.maps?.event) {
+              window.google.maps.event.trigger(mapInstanceRef.current, 'resize');
+            }
+          }, delay);
+        });
       })
       .catch((err) => {
         console.warn('Map initialization note:', err?.message);
         if (!isCancelled) {
-          setMapError('Interactive map loading in progress or key unavailable.');
+          setMapError(err?.message || 'Google Maps failed to load. Check API key, referrers, and network.');
           setLoading(false);
         }
       });
 
+    const authFailHandler = (e) => {
+      setMapError(e?.detail?.message || 'Google Maps authorization failed. Verify API key, billing, and HTTP referrers in Google Cloud Console.');
+      setLoading(false);
+    };
+
+    window.addEventListener('google-maps-auth-failure', authFailHandler);
+
     return () => {
       isCancelled = true;
+      window.removeEventListener('google-maps-auth-failure', authFailHandler);
     };
   }, []);
 
-  // Update User GPS Location Marker
+  // Observe map container resize and trigger Google Maps resize
+  useEffect(() => {
+    if (!mapElementRef.current) return;
+
+    let ro = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        if (mapInstanceRef.current && window.google?.maps?.event) {
+          window.google.maps.event.trigger(mapInstanceRef.current, 'resize');
+        }
+      });
+      ro.observe(mapElementRef.current);
+    }
+
+    return () => {
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
+  // Update User GPS Location Marker & Pan to user location
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !window.google?.maps || !userLocation?.lat || !userLocation?.lng) return;
 
+    const userPos = { lat: Number(userLocation.lat), lng: Number(userLocation.lng) };
+    if (isNaN(userPos.lat) || isNaN(userPos.lng)) return;
+
     if (markersRef.current.user) {
-      markersRef.current.user.setPosition({ lat: userLocation.lat, lng: userLocation.lng });
+      markersRef.current.user.setPosition(userPos);
     } else {
       const userMarker = new window.google.maps.Marker({
-        position: { lat: userLocation.lat, lng: userLocation.lng },
+        position: userPos,
         map,
         title: 'You are here',
         icon: {
@@ -203,15 +242,26 @@ export default function RideBookingMap({
       });
       markersRef.current.user = userMarker;
     }
+
+    // Pan map to user's detected GPS coordinates
+    map.panTo(userPos);
+    map.setZoom(15);
   }, [userLocation?.lat, userLocation?.lng]);
 
-  // Update Pickup Marker
+  // Update Pickup Marker & Pan if no route yet
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !window.google?.maps) return;
 
     if (pickup?.lat && pickup?.lng) {
-      const pos = { lat: pickup.lat, lng: pickup.lng };
+      const pos = { lat: Number(pickup.lat), lng: Number(pickup.lng) };
+      if (!isNaN(pos.lat) && !isNaN(pos.lng)) {
+        if (!routeInfo && !destination?.lat) {
+          map.panTo(pos);
+          map.setZoom(15);
+        }
+      }
+
       if (markersRef.current.pickup) {
         markersRef.current.pickup.setPosition(pos);
       } else {
@@ -237,7 +287,7 @@ export default function RideBookingMap({
       markersRef.current.pickup.setMap(null);
       markersRef.current.pickup = null;
     }
-  }, [pickup?.lat, pickup?.lng, pickup?.address]);
+  }, [pickup?.lat, pickup?.lng, pickup?.address, routeInfo, destination?.lat]);
 
   // Update Destination Marker
   useEffect(() => {
@@ -372,8 +422,52 @@ export default function RideBookingMap({
         </div>
       )}
 
-      {/* Map Canvas */}
-      <div ref={mapElementRef} className="w-full h-full" />
+      {/* Map Canvas with guaranteed dimensions */}
+      <div
+        ref={mapElementRef}
+        className="w-full h-full"
+        style={{ width: '100%', height: '100%', minHeight: '350px' }}
+      />
+
+      {/* Error / Key Issue Notification */}
+      {mapError && (
+        <div className="absolute top-4 left-4 right-4 md:right-auto md:max-w-md z-30 p-3.5 rounded-2xl bg-[#102F28]/95 border border-amber-500/50 shadow-2xl text-white backdrop-blur-md">
+          <div className="flex items-start gap-2.5">
+            <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-amber-300">Map Service Status</p>
+              <p className="text-[11px] text-slate-300 mt-0.5 leading-snug">{mapError}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setLoading(true);
+                setMapError(null);
+                loadGoogleMaps(true)
+                  .then((google) => {
+                    if (mapElementRef.current) {
+                      const map = new google.maps.Map(mapElementRef.current, {
+                        center: { lat: userLocation?.lat || 31.5204, lng: userLocation?.lng || 74.3587 },
+                        zoom: 14,
+                        disableDefaultUI: true,
+                        styles: RIDEWAVE_MAP_STYLES,
+                      });
+                      mapInstanceRef.current = map;
+                    }
+                    setLoading(false);
+                  })
+                  .catch((e) => {
+                    setMapError(e.message);
+                    setLoading(false);
+                  });
+              }}
+              className="px-2.5 py-1 rounded-lg bg-[#C6A76B] text-[#102F28] font-bold text-[10px] shrink-0 hover:bg-[#b8975a]"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Mode Banner: "Tap on Map" */}
       {pickOnMapMode && (

@@ -2,38 +2,7 @@
 
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import { Loader2, MapPin } from 'lucide-react';
-
-const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
-let mapsLoaded = false;
-let mapsLoading = false;
-const mapsCallbacks = [];
-
-function loadGoogleMaps() {
-  return new Promise((resolve, reject) => {
-    if (typeof window === 'undefined') return reject('SSR');
-    if (mapsLoaded) return resolve(window.google);
-    mapsCallbacks.push({ resolve, reject });
-    if (mapsLoading) return;
-    mapsLoading = true;
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places,geometry&callback=__googleMapsLoaded`;
-    script.async = true;
-    script.defer = true;
-    window.__googleMapsLoaded = () => {
-      mapsLoaded = true;
-      mapsLoading = false;
-      mapsCallbacks.forEach(({ resolve }) => resolve(window.google));
-      mapsCallbacks.length = 0;
-    };
-    script.onerror = () => {
-      mapsLoading = false;
-      mapsCallbacks.forEach(({ reject }) => reject(new Error('Google Maps failed to load')));
-      mapsCallbacks.length = 0;
-    };
-    document.head.appendChild(script);
-  });
-}
+import { loadGoogleMaps } from '@/lib/maps';
 
 // MapContainer — Full Google Map wrapper
 const MapContainer = forwardRef(({
@@ -122,6 +91,7 @@ const MapContainer = forwardRef(({
         setError('Failed to load Google Maps');
         setLoading(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update markers
