@@ -48,6 +48,10 @@ export default function MobileBookingExperience({ engine }) {
 
   // Bottom Sheet Snap States: 'collapsed' (120px) | 'half' (48vh) | 'full' (88vh)
   const [sheetState, setSheetState] = useState('collapsed');
+  const [sheetDrag, setSheetDrag] = useState(null);
+  const sheetHandleRef = useRef(null);
+  const dragStartRef = useRef(null);
+  const suppressHandleClickRef = useRef(false);
 
   // Active input in full expanded view: 'pickup' | 'destination' | null
   const [activeSearchField, setActiveSearchField] = useState(null);
@@ -59,9 +63,71 @@ export default function MobileBookingExperience({ engine }) {
   };
 
   const cycleSheetState = () => {
+    if (suppressHandleClickRef.current) {
+      suppressHandleClickRef.current = false;
+      return;
+    }
+
     if (sheetState === 'collapsed') setSheetState('half');
     else if (sheetState === 'half') setSheetState('full');
     else setSheetState('half');
+  };
+
+  const getSheetHeight = () => {
+    if (sheetState === 'collapsed') return 130;
+    if (typeof window === 'undefined') return null;
+    return sheetState === 'half' ? window.innerHeight * 0.5 : window.innerHeight * 0.88;
+  };
+
+  const handleSheetPointerDown = (event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    dragStartRef.current = {
+      pointerId: event.pointerId,
+      startY: event.clientY,
+      currentY: event.clientY,
+      startedAt: performance.now(),
+    };
+    setSheetDrag({ delta: 0 });
+  };
+
+  const handleSheetPointerMove = (event) => {
+    const drag = dragStartRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    drag.currentY = event.clientY;
+    setSheetDrag({ delta: event.clientY - drag.startY });
+    event.preventDefault();
+  };
+
+  const handleSheetPointerEnd = (event) => {
+    const drag = dragStartRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const delta = event.clientY - drag.startY;
+    const elapsed = Math.max(performance.now() - drag.startedAt, 1);
+    const velocity = (-delta / elapsed) * 1000;
+    const moved = Math.abs(delta) > 10;
+
+    if (moved) {
+      suppressHandleClickRef.current = true;
+      window.setTimeout(() => {
+        suppressHandleClickRef.current = false;
+      }, 0);
+    }
+
+    if (delta < -45 || velocity > 500) {
+      if (sheetState === 'collapsed') setSheetState('half');
+      else if (sheetState === 'half') setSheetState('full');
+    } else if (delta > 45 || velocity < -500) {
+      if (sheetState === 'full') setSheetState('half');
+      else if (sheetState === 'half') setSheetState('collapsed');
+    }
+
+    dragStartRef.current = null;
+    setSheetDrag(null);
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
   };
 
   // Convert snap state to CSS heights
@@ -126,12 +192,33 @@ export default function MobileBookingExperience({ engine }) {
       <motion.div
         layout
         transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-        className={`absolute inset-x-0 bottom-14 z-30 bg-white dark:bg-[#173F35] rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.25)] border-t border-[#E7E5DD] dark:border-[#23584B] flex flex-col transition-all duration-300 ${getSheetHeightClass()}`}
+        className={`absolute inset-x-0 bottom-14 z-30 bg-white dark:bg-[#173F35] rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.25)] border-t border-[#E7E5DD] dark:border-[#23584B] flex flex-col ${sheetDrag ? '' : 'transition-[height] duration-300'} ${getSheetHeightClass()}`}
+        style={sheetDrag ? {
+          height: `${Math.max(130, Math.min(window.innerHeight * 0.88, getSheetHeight() - sheetDrag.delta))}px`,
+        } : undefined}
       >
         {/* Drag Handle Bar */}
         <div
+          ref={sheetHandleRef}
           onClick={cycleSheetState}
-          className="w-full pt-3 pb-2 flex flex-col items-center justify-center cursor-pointer active:opacity-70"
+          onPointerDown={handleSheetPointerDown}
+          onPointerMove={handleSheetPointerMove}
+          onPointerUp={handleSheetPointerEnd}
+          onPointerCancel={handleSheetPointerEnd}
+          onLostPointerCapture={() => {
+            if (dragStartRef.current) {
+              dragStartRef.current = null;
+              setSheetDrag(null);
+            }
+          }}
+          role="slider"
+          aria-label="Adjust booking sheet"
+          aria-valuemin={0}
+          aria-valuemax={2}
+          aria-valuenow={sheetState === 'collapsed' ? 0 : sheetState === 'half' ? 1 : 2}
+          aria-valuetext={`${sheetState} booking sheet`}
+          tabIndex={0}
+          className="w-full pt-3 pb-2 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing active:opacity-70 touch-none"
         >
           <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600 mb-1" />
           <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
@@ -606,4 +693,3 @@ export default function MobileBookingExperience({ engine }) {
     </div>
   );
 }
-

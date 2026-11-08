@@ -118,6 +118,7 @@ export default function RideBookingMap({
 
   const [loading, setLoading] = useState(true);
   const [mapError, setMapError] = useState(null);
+  const [mapReady, setMapReady] = useState(false);
 
   // Initialize Google Maps instance
   useEffect(() => {
@@ -165,9 +166,10 @@ export default function RideBookingMap({
         directionsRendererRef.current = renderer;
 
         setLoading(false);
+        setMapReady(true);
 
         // Ensure map resizes properly after DOM settlement
-        [100, 300, 600].forEach((delay) => {
+        [0, 100, 300, 600].forEach((delay) => {
           setTimeout(() => {
             if (mapInstanceRef.current && window.google?.maps?.event) {
               window.google.maps.event.trigger(mapInstanceRef.current, 'resize');
@@ -246,7 +248,7 @@ export default function RideBookingMap({
     // Pan map to user's detected GPS coordinates
     map.panTo(userPos);
     map.setZoom(15);
-  }, [userLocation?.lat, userLocation?.lng]);
+  }, [mapReady, userLocation?.lat, userLocation?.lng]);
 
   // Update Pickup Marker & Pan if no route yet
   useEffect(() => {
@@ -287,7 +289,7 @@ export default function RideBookingMap({
       markersRef.current.pickup.setMap(null);
       markersRef.current.pickup = null;
     }
-  }, [pickup?.lat, pickup?.lng, pickup?.address, routeInfo, destination?.lat]);
+  }, [mapReady, pickup?.lat, pickup?.lng, pickup?.address, routeInfo, destination?.lat]);
 
   // Update Destination Marker
   useEffect(() => {
@@ -321,7 +323,7 @@ export default function RideBookingMap({
       markersRef.current.destination.setMap(null);
       markersRef.current.destination = null;
     }
-  }, [destination?.lat, destination?.lng, destination?.address]);
+  }, [mapReady, destination?.lat, destination?.lng, destination?.address]);
 
   // Render or Clear Route Polyline
   useEffect(() => {
@@ -345,7 +347,7 @@ export default function RideBookingMap({
       // Clear route
       renderer.set('directions', null);
     }
-  }, [routeInfo]);
+  }, [mapReady, routeInfo]);
 
   // Render Nearby Available Rides Markers
   useEffect(() => {
@@ -389,7 +391,7 @@ export default function RideBookingMap({
 
       markersRef.current.rides.push(rideMarker);
     });
-  }, [availableRides, selectedRide, onSelectRide]);
+  }, [mapReady, availableRides, selectedRide, onSelectRide]);
 
   // Recenter Map on User GPS Location
   const handleRecenter = useCallback(() => {
@@ -453,6 +455,7 @@ export default function RideBookingMap({
                         styles: RIDEWAVE_MAP_STYLES,
                       });
                       mapInstanceRef.current = map;
+                      setMapReady(true);
                     }
                     setLoading(false);
                   })

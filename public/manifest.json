@@ -4,8 +4,8 @@
   "description": "Premium AI-Powered Ride Booking Platform",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#6366f1",
+  "background_color": "#102F28",
+  "theme_color": "#102F28",
   "orientation": "portrait-primary",
   "icons": [
     {

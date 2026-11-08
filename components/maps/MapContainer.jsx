@@ -29,7 +29,7 @@ const MapContainer = forwardRef(({
   }));
 
   useEffect(() => {
-    if (!GOOGLE_MAPS_API_KEY) {
+    if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
       setError('Google Maps API key not configured');
       setLoading(false);
       return;
