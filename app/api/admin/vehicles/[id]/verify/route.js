@@ -1,43 +1,67 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { verifyAdminRequest, logAdminActivity } from '@/lib/admin-auth';
 
 export async function PATCH(request, { params }) {
   try {
-    const session = await auth();
-    if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    if (session.user?.role !== 'ADMIN') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    const admin = await verifyAdminRequest(request);
+    if (!admin.authenticated) {
+      return NextResponse.json({ message: 'Unauthorized. Admin access required.' }, { status: 401 });
+    }
+
     const { id } = await params;
     const { decision, notes } = await request.json();
 
+    if (!['APPROVED', 'REJECTED', 'PENDING'].includes(decision)) {
+      return NextResponse.json({ message: 'Valid decision (APPROVED/REJECTED/PENDING) is required' }, { status: 400 });
+    }
+
     const vehicle = await prisma.vehicle.update({
       where: { id },
-      data: { verificationStatus: decision, verificationNotes: notes || null },
+      data: {
+        verificationStatus: decision,
+        isVerified: decision === 'APPROVED',
+      },
       include: { owner: true },
     });
 
     // Notify rider
-    await prisma.notification.create({
-      data: {
-        userId: vehicle.ownerId,
-        type: 'VERIFICATION',
-        title: decision === 'APPROVED' ? '✅ Vehicle Approved!' : '❌ Vehicle Rejected',
-        body: decision === 'APPROVED'
-          ? `Your ${vehicle.brand} ${vehicle.model} has been verified. You can now publish rides!`
-          : `Your ${vehicle.brand} ${vehicle.model} was rejected. Reason: ${notes || 'Documents incomplete'}. Please resubmit.`,
-      },
-    });
+    try {
+      await prisma.notification.create({
+        data: {
+          userId: vehicle.ownerId,
+          type: decision === 'APPROVED' ? 'VERIFICATION_APPROVED' : 'VERIFICATION_REJECTED',
+          title: decision === 'APPROVED' ? '✅ Vehicle Approved!' : '❌ Vehicle Rejected',
+          body:
+            decision === 'APPROVED'
+              ? `Your ${vehicle.brand} ${vehicle.model} (${vehicle.registrationNumber}) has been approved. You can now publish rides!`
+              : `Your ${vehicle.brand} ${vehicle.model} was not approved. Reason: ${notes || 'Documents incomplete'}. Please update details.`,
+        },
+      });
+    } catch (notifErr) {
+      console.warn('Vehicle notification error:', notifErr?.message);
+    }
 
-    // If approved, update rider's verification status
+    // If approved, update rider's profile verification status
     if (decision === 'APPROVED') {
-      await prisma.profile.update({
+      await prisma.profile.updateMany({
         where: { userId: vehicle.ownerId },
         data: { isRiderVerified: true },
       });
     }
 
-    return NextResponse.json({ vehicle });
+    await logAdminActivity({
+      adminEmail: admin.email,
+      action: `VEHICLE_${decision}`,
+      targetType: 'VEHICLE',
+      targetId: id,
+      details: { vehicle: `${vehicle.brand} ${vehicle.model}`, registration: vehicle.registrationNumber, notes },
+      req: request,
+    });
+
+    return NextResponse.json({ success: true, vehicle });
   } catch (error) {
+    console.error('PATCH /api/admin/vehicles/[id]/verify error:', error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

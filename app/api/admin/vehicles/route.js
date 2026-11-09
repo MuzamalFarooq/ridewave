@@ -1,23 +1,25 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { verifyAdminRequest } from '@/lib/admin-auth';
 
 export async function GET(request) {
   try {
-    const session = await auth();
-    if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    if (session.user?.role !== 'ADMIN') return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+    const admin = await verifyAdminRequest(request);
+    if (!admin.authenticated) {
+      return NextResponse.json({ message: 'Unauthorized. Admin access required.' }, { status: 401 });
+    }
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || 'PENDING';
 
     const vehicles = await prisma.vehicle.findMany({
-      where: { verificationStatus: status },
+      where: status !== 'ALL' ? { verificationStatus: status } : {},
       include: { owner: { select: { name: true, email: true, phone: true } } },
       orderBy: { createdAt: 'desc' },
     });
     return NextResponse.json({ vehicles });
   } catch (error) {
+    console.error('GET /api/admin/vehicles error:', error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

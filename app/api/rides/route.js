@@ -74,6 +74,15 @@ export async function POST(request) {
       return NextResponse.json({ message: 'Only riders can create rides' }, { status: 403 });
     }
 
+    // Verify rider account is active and not blocked
+    const riderUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { isBanned: true, isActive: true },
+    });
+    if (riderUser?.isBanned || riderUser?.isActive === false) {
+      return NextResponse.json({ message: 'Your account is suspended. You cannot publish rides.' }, { status: 403 });
+    }
+
     const body = await request.json();
     const {
       vehicleId, pickupAddress, destinationAddress, pickupLat, pickupLng,

@@ -61,6 +61,15 @@ export async function POST(request) {
     const session = await auth();
     if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
 
+    // Verify account is active and not blocked
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { isBanned: true, isActive: true },
+    });
+    if (currentUser?.isBanned || currentUser?.isActive === false) {
+      return NextResponse.json({ message: 'Your account is suspended. Booking is disabled.' }, { status: 403 });
+    }
+
     const body = await request.json();
     const { rideId, seatsBooked, paymentMethod, couponCode, passengerNotes } = body;
 
