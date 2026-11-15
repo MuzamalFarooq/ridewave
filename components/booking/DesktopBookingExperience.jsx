@@ -77,22 +77,19 @@ export default function DesktopBookingExperience({ engine }) {
           sidebarCollapsed ? 'w-20' : 'w-64'
         }`}
       >
-        {/* Brand Header */}
+        {/* Sidebar Header */}
         <div className="p-4 border-b border-[#E7E5DD] dark:border-[#23584B] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-2xl bg-[#173F35] dark:bg-[#102F28] border border-[#C6A76B] flex items-center justify-center text-[#C6A76B] font-bold text-sm shadow-sm">
-              RW
-            </div>
-            {!sidebarCollapsed && (
-              <span className="font-outfit font-bold text-lg text-[#171A17] dark:text-white">
-                RideWave
-              </span>
-            )}
-          </Link>
+          {!sidebarCollapsed ? (
+            <span className="text-xs font-bold uppercase tracking-wider text-[#173F35] dark:text-[#C6A76B]">
+              Quick Navigation
+            </span>
+          ) : (
+            <div className="w-2" />
+          )}
           <button
             type="button"
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-[#102F28] text-slate-500"
+            className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-[#102F28] text-slate-500 transition-colors"
             title="Toggle Sidebar"
           >
             <ChevronRight className={`w-4 h-4 transition-transform ${sidebarCollapsed ? '' : 'rotate-180'}`} />

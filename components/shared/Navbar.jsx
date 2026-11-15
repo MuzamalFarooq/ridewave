@@ -81,7 +81,16 @@ export default function Navbar() {
   ];
 
   const isHomePage = pathname === '/';
-  const isMapBookingPage = pathname === '/find-ride' || pathname === '/book-ride';
+
+  const isLinkActive = (href) => {
+    if (href === '/') return pathname === '/';
+    if (href === '/find-ride') return pathname === '/find-ride' || pathname === '/book-ride';
+    if (href === '/#how-it-works') return pathname === '/how-it-works';
+    if (href === '/#vehicles') return pathname === '/vehicles';
+    if (href === '/become-rider') return pathname === '/become-rider';
+    if (href === '/help') return pathname === '/help' || pathname === '/contact' || pathname === '/faq';
+    return pathname === href;
+  };
 
   return (
     <>
@@ -90,11 +99,11 @@ export default function Navbar() {
         animate={{ y: 0 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isMapBookingPage ? 'max-md:hidden ' : ''
-        }${
-          isScrolled || !isHomePage
+          isScrolled
             ? 'bg-[#F8F6F0]/95 dark:bg-[#102F28]/95 backdrop-blur-md border-b border-[#E7E5DD] dark:border-[#23584B] shadow-sm'
-            : 'bg-[#F8F6F0]/80 dark:bg-[#102F28]/80 backdrop-blur-sm border-b border-transparent'
+            : isHomePage
+            ? 'bg-[#F8F6F0]/80 dark:bg-[#102F28]/80 backdrop-blur-sm border-b border-transparent'
+            : 'bg-[#F8F6F0]/95 dark:bg-[#102F28]/95 backdrop-blur-md border-b border-[#E7E5DD] dark:border-[#23584B] shadow-xs'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,14 +125,14 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center gap-1 bg-white/70 dark:bg-[#173F35]/60 border border-[#E7E5DD] dark:border-[#23584B] px-3 py-1.5 rounded-full shadow-sm">
+            <div className="hidden lg:flex items-center gap-1 bg-white/70 dark:bg-[#173F35]/60 border border-[#E7E5DD] dark:border-[#23584B] px-2.5 xl:px-3 py-1.5 rounded-full shadow-sm">
               {navLinks.map((link) => {
-                const isActive = pathname === link.href;
+                const isActive = isLinkActive(link.href);
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className={`text-sm font-semibold px-3.5 py-1.5 rounded-full transition-all duration-200 ${
+                    className={`text-xs xl:text-sm font-semibold px-2.5 xl:px-3.5 py-1.5 rounded-full transition-all duration-200 ${
                       isActive
                         ? 'bg-[#173F35] text-white shadow-xs'
                         : 'text-[#242824] dark:text-[#F8F6F0] hover:text-[#173F35] dark:hover:text-[#C6A76B] hover:bg-[#DCE7DF]/40 dark:hover:bg-[#19463B]'
@@ -293,7 +302,7 @@ export default function Navbar() {
                   </Link>
                   <Link
                     href="/find-ride"
-                    className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold bg-[#173F35] text-white hover:bg-[#102F28] transition-all shadow-sm active:scale-95"
+                    className="hidden sm:inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold bg-[#173F35] text-white hover:bg-[#102F28] transition-all shadow-sm active:scale-95"
                   >
                     <span>Book a Ride</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -327,7 +336,7 @@ export default function Navbar() {
               <div className="space-y-1">
                 {navLinks.map((link) => {
                   const Icon = link.icon;
-                  const isActive = pathname === link.href;
+                  const isActive = isLinkActive(link.href);
                   return (
                     <Link
                       key={link.href}

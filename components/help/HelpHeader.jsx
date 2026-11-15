@@ -18,7 +18,8 @@ export default function HelpHeader({ searchQuery, setSearchQuery, totalResultsCo
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#C6A76B]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-10 left-10 w-80 h-80 bg-[#23584B]/40 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-3xl mx-auto text-center space-y-6">
         {/* Welcome Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#102F28]/80 border border-[#23584B] text-xs font-semibold text-[#C6A76B] shadow-sm">
           <Sparkles className="w-3.5 h-3.5" />
@@ -101,7 +102,8 @@ export default function HelpHeader({ searchQuery, setSearchQuery, totalResultsCo
           )}
         </div>
       </div>
-    </header>
+    </div>
+  </header>
   );
 }
 

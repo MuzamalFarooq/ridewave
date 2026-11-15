@@ -160,7 +160,7 @@ export default function MobileBookingExperience({ engine }) {
       </div>
 
       {/* 2. Clean Floating Header */}
-      <header className="absolute top-3 inset-x-3 z-20 flex items-center justify-between pointer-events-none">
+      <header className="absolute top-22 inset-x-3 z-20 flex items-center justify-between pointer-events-none">
         {/* Brand Chip */}
         <div className="pointer-events-auto flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-white/95 dark:bg-[#102F28]/95 backdrop-blur-md shadow-lg border border-[#E7E5DD] dark:border-[#23584B]">
           <div className="w-7 h-7 rounded-full bg-[#173F35] flex items-center justify-center text-white font-bold text-xs">
