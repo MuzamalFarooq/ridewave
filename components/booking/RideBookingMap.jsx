@@ -127,6 +127,7 @@ export default function RideBookingMap({
     loadGoogleMaps()
       .then((google) => {
         if (isCancelled || !mapElementRef.current) return;
+        if (mapInstanceRef.current) return; // Prevent duplicate instantiation
 
         // Default initial center (User location if available, otherwise Lahore coordinates)
         const initialLat = userLocationRef.current?.lat || 31.5204;
@@ -195,6 +196,10 @@ export default function RideBookingMap({
     return () => {
       isCancelled = true;
       window.removeEventListener('google-maps-auth-failure', authFailHandler);
+      if (mapInstanceRef.current && window.google?.maps?.event) {
+        window.google.maps.event.clearInstanceListeners(mapInstanceRef.current);
+      }
+      mapInstanceRef.current = null;
     };
   }, []);
 

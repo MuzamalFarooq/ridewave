@@ -37,7 +37,7 @@ const MapContainer = forwardRef(({
 
     loadGoogleMaps()
       .then((google) => {
-        if (!mapRef.current) return;
+        if (!mapRef.current || mapInstanceRef.current) return;
 
         const map = new google.maps.Map(mapRef.current, {
           center,

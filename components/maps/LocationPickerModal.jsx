@@ -45,6 +45,7 @@ export default function LocationPickerModal({
   const markerRef = useRef(null);
   const autocompleteRef = useRef(null);
   const geoTimeoutRef = useRef(null);
+  const isInitializingRef = useRef(false);
 
   const [searchQuery, setSearchQuery] = useState(initialAddress || '');
   const [selectedLocation, setSelectedLocation] = useState({
@@ -56,6 +57,11 @@ export default function LocationPickerModal({
     longitude: DEFAULT_CENTER.lng,
     placeId: null,
   });
+
+  const selectedLocationRef = useRef(selectedLocation);
+  useEffect(() => {
+    selectedLocationRef.current = selectedLocation;
+  }, [selectedLocation]);
 
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [isGpsLoading, setIsGpsLoading] = useState(false);
@@ -169,157 +175,181 @@ export default function LocationPickerModal({
 
   // Load Google Maps & Initialize Map Instance
   const initMap = useCallback(
-    (forceRetry = false) => {
+    async (forceRetry = false) => {
       if (!mapRef.current) return;
+
+      // If map is already initialized, just trigger resize and recenter
+      if (mapInstanceRef.current && !forceRetry) {
+        if (window.google?.maps?.event) {
+          window.google.maps.event.trigger(mapInstanceRef.current, 'resize');
+          const currentLat = Number(selectedLocationRef.current?.lat) || DEFAULT_CENTER.lat;
+          const currentLng = Number(selectedLocationRef.current?.lng) || DEFAULT_CENTER.lng;
+          mapInstanceRef.current.setCenter({ lat: currentLat, lng: currentLng });
+        }
+        return;
+      }
+
+      if (isInitializingRef.current && !forceRetry) return;
+      isInitializingRef.current = true;
 
       setMapsState({ loading: true, error: null });
 
-      loadGoogleMaps(forceRetry)
-        .then((google) => {
-          if (!google || !mapRef.current) {
-            throw new Error('Google Maps failed to initialize.');
-          }
+      try {
+        const google = await loadGoogleMaps(forceRetry);
+        if (!google || !mapRef.current) {
+          throw new Error('Google Maps failed to initialize.');
+        }
 
-          setMapsState({ loading: false, error: null });
+        const initialCenter = {
+          lat: Number(selectedLocationRef.current?.lat) || DEFAULT_CENTER.lat,
+          lng: Number(selectedLocationRef.current?.lng) || DEFAULT_CENTER.lng,
+        };
 
-          const initialCenter = {
-            lat: selectedLocation.lat || DEFAULT_CENTER.lat,
-            lng: selectedLocation.lng || DEFAULT_CENTER.lng,
-          };
-
-          const map = new google.maps.Map(mapRef.current, {
-            center: initialCenter,
-            zoom: 15,
-            disableDefaultUI: false,
-            zoomControl: true,
-            streetViewControl: false,
-            mapTypeControl: false,
-            fullscreenControl: false,
-            gestureHandling: 'greedy',
-            styles: DARK_MAP_STYLES,
-          });
-
-          mapInstanceRef.current = map;
-
-          const pinColor = fieldType === 'from' ? '#6366f1' : '#ec4899';
-
-          // Custom Marker Icon
-          const marker = new google.maps.Marker({
-            position: initialCenter,
-            map,
-            draggable: true,
-            title: 'Selected Pickup/Drop-off Location',
-            animation: google.maps.Animation.DROP,
-            icon: {
-              path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-              scale: 7,
-              fillColor: pinColor,
-              fillOpacity: 1,
-              strokeColor: '#ffffff',
-              strokeWeight: 2,
-            },
-          });
-
-          markerRef.current = marker;
-
-          // Real-time position updates while dragging marker
-          marker.addListener('drag', (e) => {
-            const lat = e.latLng.lat();
-            const lng = e.latLng.lng();
-            setRealtimeCoords(lat, lng);
-          });
-
-          // Final geocode when drag ends
-          marker.addListener('dragend', (e) => {
-            const lat = e.latLng.lat();
-            const lng = e.latLng.lng();
-            performReverseGeocode(lat, lng);
-          });
-
-          // Map click to place marker
-          map.addListener('click', (e) => {
-            const lat = e.latLng.lat();
-            const lng = e.latLng.lng();
-            marker.setPosition({ lat, lng });
-            performReverseGeocode(lat, lng);
-          });
-
-          // Ensure map resizes properly after modal transition
-          [100, 300, 600].forEach((delay) => {
-            setTimeout(() => {
-              if (mapInstanceRef.current && window.google?.maps?.event) {
-                window.google.maps.event.trigger(mapInstanceRef.current, 'resize');
-                // Pan to current selected location or initial center
-                const currentCenter = selectedLocation.lat
-                  ? { lat: Number(selectedLocation.lat), lng: Number(selectedLocation.lng) }
-                  : initialCenter;
-                mapInstanceRef.current.setCenter(currentCenter);
-              }
-            }, delay);
-          });
-
-          // Google Places Autocomplete Search Box
-          if (searchInputRef.current && google.maps.places) {
-            const autocomplete = new google.maps.places.Autocomplete(searchInputRef.current, {
-              fields: ['formatted_address', 'geometry', 'name', 'place_id'],
-            });
-
-            autocompleteRef.current = autocomplete;
-
-            autocomplete.addListener('place_changed', () => {
-              const place = autocomplete.getPlace();
-              if (!place || !place.geometry || !place.geometry.location) return;
-
-              const lat = place.geometry.location.lat();
-              const lng = place.geometry.location.lng();
-              const address = place.formatted_address || place.name || '';
-              const placeId = place.place_id || null;
-
-              setLocationState(lat, lng, address, placeId);
-              updateMapAndMarker(lat, lng, 16);
-            });
-          }
-        })
-        .catch((err) => {
-          console.error('Google Maps load error:', err);
-          setMapsState({
-            loading: false,
-            error: err?.message || 'Failed to load Google Maps JavaScript API. Please check your network connection.',
-          });
+        const map = new google.maps.Map(mapRef.current, {
+          center: initialCenter,
+          zoom: 15,
+          disableDefaultUI: false,
+          zoomControl: true,
+          streetViewControl: false,
+          mapTypeControl: false,
+          fullscreenControl: false,
+          gestureHandling: 'greedy',
+          styles: DARK_MAP_STYLES,
         });
+
+        mapInstanceRef.current = map;
+
+        const pinColor = fieldType === 'from' ? '#6366f1' : '#ec4899';
+
+        // Custom Marker Icon
+        const marker = new google.maps.Marker({
+          position: initialCenter,
+          map,
+          draggable: true,
+          title: 'Selected Pickup/Drop-off Location',
+          animation: google.maps.Animation.DROP,
+          icon: {
+            path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
+            scale: 7,
+            fillColor: pinColor,
+            fillOpacity: 1,
+            strokeColor: '#ffffff',
+            strokeWeight: 2,
+          },
+        });
+
+        markerRef.current = marker;
+
+        // Real-time position updates while dragging marker
+        marker.addListener('drag', (e) => {
+          const lat = e.latLng.lat();
+          const lng = e.latLng.lng();
+          setRealtimeCoords(lat, lng);
+        });
+
+        // Final geocode when drag ends
+        marker.addListener('dragend', (e) => {
+          const lat = e.latLng.lat();
+          const lng = e.latLng.lng();
+          performReverseGeocode(lat, lng);
+        });
+
+        // Map click to place marker
+        map.addListener('click', (e) => {
+          const lat = e.latLng.lat();
+          const lng = e.latLng.lng();
+          marker.setPosition({ lat, lng });
+          performReverseGeocode(lat, lng);
+        });
+
+        // Google Places Autocomplete Search Box
+        if (searchInputRef.current && google.maps.places) {
+          if (autocompleteRef.current && window.google?.maps?.event) {
+            window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
+          }
+
+          const autocomplete = new google.maps.places.Autocomplete(searchInputRef.current, {
+            fields: ['formatted_address', 'geometry', 'name', 'place_id'],
+          });
+
+          autocompleteRef.current = autocomplete;
+
+          autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            if (!place || !place.geometry || !place.geometry.location) return;
+
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            const address = place.formatted_address || place.name || '';
+            const placeId = place.place_id || null;
+
+            setLocationState(lat, lng, address, placeId);
+            updateMapAndMarker(lat, lng, 16);
+          });
+        }
+
+        setMapsState({ loading: false, error: null });
+
+        // Ensure map resizes properly after modal transition
+        [50, 150, 300, 600].forEach((delay) => {
+          setTimeout(() => {
+            if (mapInstanceRef.current && window.google?.maps?.event) {
+              window.google.maps.event.trigger(mapInstanceRef.current, 'resize');
+              const curCenter = selectedLocationRef.current?.lat
+                ? { lat: Number(selectedLocationRef.current.lat), lng: Number(selectedLocationRef.current.lng) }
+                : initialCenter;
+              mapInstanceRef.current.setCenter(curCenter);
+            }
+          }, delay);
+        });
+      } catch (err) {
+        console.error('Google Maps load error:', err);
+        setMapsState({
+          loading: false,
+          error: err?.message || 'Failed to load Google Maps JavaScript API. Please check your network connection.',
+        });
+      } finally {
+        isInitializingRef.current = false;
+      }
     },
-    [fieldType, selectedLocation.lat, selectedLocation.lng, performReverseGeocode, setRealtimeCoords, setLocationState, updateMapAndMarker]
+    [fieldType, performReverseGeocode, setRealtimeCoords, setLocationState, updateMapAndMarker]
   );
 
   // Lifecycle on modal open
   useEffect(() => {
     if (!isOpen) return;
 
+    let isMounted = true;
+
     const timer = setTimeout(() => {
+      if (!isMounted) return;
       setSearchQuery(initialAddress || '');
 
       if (initialAddress) {
         setIsGeocoding(true);
         geocodeAddress(initialAddress)
           .then((res) => {
-            if (res) {
+            if (res && isMounted) {
               setLocationState(res.lat, res.lng, res.formattedAddress || initialAddress);
               updateMapAndMarker(res.lat, res.lng, 15);
             }
           })
           .catch(() => {
-            detectGpsLocation();
+            if (isMounted) detectGpsLocation();
           })
-          .finally(() => setIsGeocoding(false));
+          .finally(() => {
+            if (isMounted) setIsGeocoding(false);
+          });
       } else {
         detectGpsLocation();
       }
 
-      // Initialize Map
+      // Initialize Map once on modal open
       initMap();
     }, 0);
 
     return () => {
+      isMounted = false;
       clearTimeout(timer);
       if (autocompleteRef.current && window.google?.maps?.event) {
         window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
@@ -330,6 +360,10 @@ export default function LocationPickerModal({
       if (mapInstanceRef.current && window.google?.maps?.event) {
         window.google.maps.event.clearInstanceListeners(mapInstanceRef.current);
       }
+      mapInstanceRef.current = null;
+      markerRef.current = null;
+      autocompleteRef.current = null;
+      isInitializingRef.current = false;
     };
   }, [isOpen, initialAddress, detectGpsLocation, initMap, setLocationState, updateMapAndMarker]);
 
