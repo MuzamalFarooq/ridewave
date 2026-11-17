@@ -166,7 +166,7 @@ function LoginForm() {
           <h2 className="text-2xl font-outfit font-bold mb-2">Sign in to your account</h2>
           <p className="text-sm mb-8" style={{ color: 'var(--text-muted)' }}>
             Don't have an account?{' '}
-            <Link href="/register" className="font-medium" style={{ color: 'var(--primary)' }}>
+            <Link href="/register" className="font-medium" style={{ color: rgb(235, 240, 233) }}>
               Create one free
             </Link>
           </p>
