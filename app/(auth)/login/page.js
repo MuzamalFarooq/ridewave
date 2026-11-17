@@ -100,7 +100,7 @@ function LoginForm() {
           />
         ))}
 
-        <div className="text-center text-[#171A17] z-10">
+        <div className="text-center text-charcole z-10">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -114,7 +114,7 @@ function LoginForm() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-4xl font-outfit font-bold mb-4 text-[#171A17]"
+            className="text-4xl font-outfit font-bold mb-4 text-charcole"
           >
             Welcome to RideWave
           </motion.h1>
@@ -139,8 +139,8 @@ function LoginForm() {
               { value: '50K+', label: 'Rides' },
             ].map(({ value, label }) => (
               <div key={label} className="text-center">
-                <div className="text-2xl font-bold text-[#171A17]">{value}</div>
-                <div className="text-xs text-[#4E554B]">{label}</div>
+                <div className="text-2xl font-bold text-charcole">{value}</div>
+                <div className="text-xs text-muted">{label}</div>
               </div>
             ))}
           </motion.div>
